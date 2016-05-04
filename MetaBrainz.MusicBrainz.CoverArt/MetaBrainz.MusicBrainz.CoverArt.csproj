@@ -7,7 +7,7 @@
     <ProjectGuid>{59B631FF-FF1E-40B6-BA82-12FEB35C2A5C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MetaBrainz.MusicBrainz.CoverArt</RootNamespace>
+    <RootNamespace>MetaBrainz.MusicBrainz.CoverArtArchive</RootNamespace>
     <AssemblyName>MetaBrainz.MusicBrainz.CoverArt</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -37,9 +37,19 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoverArtType.cs" />
+    <Compile Include="ImageSize.cs" />
+    <Compile Include="JsonObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RawImage.cs" />
+    <Compile Include="Thumbnails.cs" />
+    <Compile Include="ReleaseInfo.cs" />
+    <Compile Include="CoverArt.cs" />
+    <Compile Include="ImageInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
