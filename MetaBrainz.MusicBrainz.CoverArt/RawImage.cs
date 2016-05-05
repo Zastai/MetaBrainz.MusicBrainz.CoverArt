@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 
-namespace MetaBrainz.MusicBrainz.CoverArtArchive {
+namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>The raw bytes and accompanying content type for an image downloaded from the CoverArt Archive.</summary>
   public sealed class RawImage : IDisposable {
@@ -18,12 +17,12 @@ namespace MetaBrainz.MusicBrainz.CoverArtArchive {
     /// <summary>The image's raw data.</summary>
     public readonly Stream Data;
 
-    /// <summary>Attempts to create an <see cref="Image"/> from <see cref="Data"/>.</summary>
-    /// <returns>A newly-constructed <see cref="Image"/>.</returns>
+    /// <summary>Attempts to create an <see cref="System.Drawing.Image"/> from <see cref="Data"/>.</summary>
+    /// <returns>A newly-constructed <see cref="System.Drawing.Image"/>.</returns>
     /// <remarks>This complete ignores <see cref="ContentType"/>.</remarks>
-    /// <exception cref="ArgumentException">When the image data is not valid (or not supported by the <see cref="Image"/> class).</exception>
-    public Image Decode(bool useEmbeddedColorManagement = false, bool validateImageData = false) {
-      return Image.FromStream(this.Data, useEmbeddedColorManagement, validateImageData);
+    /// <exception cref="ArgumentException">When the image data is not valid (or not supported by the <see cref="System.Drawing.Image"/> class).</exception>
+    public System.Drawing.Image Decode(bool useEmbeddedColorManagement = false, bool validateImageData = false) {
+      return System.Drawing.Image.FromStream(this.Data, useEmbeddedColorManagement, validateImageData);
     }
 
     #region IDisposable

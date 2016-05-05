@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace MetaBrainz.MusicBrainz.CoverArtArchive {
+namespace MetaBrainz.MusicBrainz.CoverArt {
 
-  /// <summary>Class representing the thumbnails available for an <see cref="ImageInfo"/>.</summary>
+  /// <summary>Class representing the thumbnails available for an <see cref="Image"/>.</summary>
   public sealed class Thumbnails {
 
     internal Thumbnails(JsonObjects.Thumbnails json) {
@@ -10,9 +10,6 @@ namespace MetaBrainz.MusicBrainz.CoverArtArchive {
       this.Large = json.large;
       this.Huge  = json.huge;
     }
-
-    // Assumption: While thumbnail types may be added, it won't be an arbitrary number with arbitrary names.
-    //             So, having specifically-named properties is nicer than a more generic dictionary-style interface.
 
     /// <summary>The URI for the small (250px) thumbnail of the image, if available.</summary>
     public Uri Small { get; }

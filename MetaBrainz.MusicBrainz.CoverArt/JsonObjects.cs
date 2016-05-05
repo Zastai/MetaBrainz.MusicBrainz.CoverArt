@@ -1,18 +1,24 @@
 ﻿using System;
 
+using JetBrains.Annotations;
+
 // These are all created by the deserializer, so there's no point in complaining that their fields are uninitialized.
 #pragma warning disable 649
 
-namespace MetaBrainz.MusicBrainz.CoverArtArchive {
+// The field names explicitly match the JSON tags.
+// ReSharper disable InconsistentNaming
 
-  /// <summary>Class encapsulating the "raw" JSON objects as produced by the deserializer.</summary>
+namespace MetaBrainz.MusicBrainz.CoverArt {
+
   internal static class JsonObjects {
 
+    [UsedImplicitly]
     public sealed class Release {
       public Uri     release;
       public Image[] images;
     }
 
+    [UsedImplicitly]
     public sealed class Image {
       public string     id;
       public Uri        image;
@@ -25,6 +31,7 @@ namespace MetaBrainz.MusicBrainz.CoverArtArchive {
       public bool       approved;
     }
 
+    [UsedImplicitly]
     public sealed class Thumbnails {
       public Uri small;
       public Uri large;

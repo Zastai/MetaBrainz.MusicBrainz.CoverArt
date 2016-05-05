@@ -1,4 +1,4 @@
-﻿namespace MetaBrainz.MusicBrainz.CoverArtArchive {
+﻿namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Enumeration indicating the desired size of an image to be fetched from the CoverArt Archive.</summary>
   public enum ImageSize : ushort {

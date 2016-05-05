@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Web.Script.Serialization;
 
-namespace MetaBrainz.MusicBrainz.CoverArtArchive {
+namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Class providing access to the CoverArt Archive API.</summary>
   public class CoverArt {
@@ -14,9 +14,6 @@ namespace MetaBrainz.MusicBrainz.CoverArtArchive {
 
     /// <summary>The default port number to use for requests (-1 to not specify any explicit port).</summary>
     public static int DefaultPort { get; set; } = -1;
-
-    /// <summary>The default URL scheme to use for requests.</summary>
-    public static string DefaultUrlScheme { get; set; } = "https";
 
     /// <summary>The default user agent to use for requests.</summary>
     public static string DefaultUserAgent { get; set; } = null;
@@ -38,7 +35,7 @@ namespace MetaBrainz.MusicBrainz.CoverArtArchive {
       this.UserAgent = userAgent ?? CoverArt.DefaultUserAgent;
       if (this.UserAgent == null)
         throw new ArgumentNullException(nameof(userAgent));
-      // TODO: Validate/Transform user agent string
+      // libcoverart replaces all dashes by slashes; but that turns valid user agents like "CERN-LineMode/2.15" into invalid ones ("CERN/LineMode/2.15")
     }
 
     #endregion
@@ -47,9 +44,6 @@ namespace MetaBrainz.MusicBrainz.CoverArtArchive {
 
     /// <summary>The port number to use for requests (-1 to not specify any explicit port).</summary>
     public int Port { get; set; } = CoverArt.DefaultPort;
-
-    /// <summary>The URL scheme to use for requests.</summary>
-    public string UrlScheme { get; set; } = CoverArt.DefaultUrlScheme;
 
     /// <summary>The user agent to use for all requests.</summary>
     public string UserAgent { get; }
@@ -61,15 +55,68 @@ namespace MetaBrainz.MusicBrainz.CoverArtArchive {
 
     #region Image Retrieval
 
-    public RawImage FetchBack(Guid mbid, ImageSize size = ImageSize.Original) => this.FetchImage(mbid, "back", size);
+    /// <summary>Fetch the main "back" image for the specified release.</summary>
+    /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
+    /// <param name="size">The requested image size; <see cref="ImageSize.Original"/> can be any content type, but the thumbnails are always JPEG.</param>
+    /// <returns>The requested image data.</returns>
+    /// <exception cref="WebException">
+    ///   When something went wrong with the request. More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
+    ///   Possibe status codes for the response are:
+    ///   <ul>
+    ///     <li>404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "back" image set);</li>
+    ///     <li>503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.</li>
+    ///   </ul>
+    /// </exception>
+    public RawImage FetchBack(Guid mbid, ImageSize size = ImageSize.Original)  => this.FetchImage("release", mbid, "back", size);
 
-    public RawImage FetchFront(Guid mbid, ImageSize size = ImageSize.Original) => this.FetchImage(mbid, "front", size);
+    /// <summary>Fetch the main "front" image for the specified release, in the specified size.</summary>
+    /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
+    /// <param name="size">The requested image size; <see cref="ImageSize.Original"/> can be any content type, but the thumbnails are always JPEG.</param>
+    /// <returns>The requested image data.</returns>
+    /// <exception cref="WebException">
+    ///   When something went wrong with the request. More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
+    ///   Possibe status codes for the response are:
+    ///   <ul>
+    ///     <li>404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "front" image set);</li>
+    ///     <li>503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.</li>
+    ///   </ul>
+    /// </exception>
+    public RawImage FetchFront(Guid mbid, ImageSize size = ImageSize.Original) => this.FetchImage("release", mbid, "front", size);
 
-    public RawImage FetchImage(Guid mbid, string id, ImageSize size = ImageSize.Original) {
+    /// <summary>Fetch the main "front" image for the specified release groupt, in the specified size.</summary>
+    /// <param name="mbid">The MusicBrainz release group ID for which the image is requested.</param>
+    /// <param name="size">The requested image size; <see cref="ImageSize.Original"/> can be any content type, but the thumbnails are always JPEG.</param>
+    /// <returns>The requested image data.</returns>
+    /// <exception cref="WebException">
+    ///   When something went wrong with the request. More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
+    ///   Possibe status codes for the response are:
+    ///   <ul>
+    ///     <li>404 (<see cref="HttpStatusCode.NotFound"/>) when the release group does not exist (or has no "front" image set);</li>
+    ///     <li>503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.</li>
+    ///   </ul>
+    /// </exception>
+    public RawImage FetchGroupFront(Guid mbid, ImageSize size = ImageSize.Original) => this.FetchImage("release-group", mbid, "front", size);
+
+    /// <summary>Fetch the specified image for the specified release, in the specified size.</summary>
+    /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
+    /// <param name="id">The ID of the requested image (as found via <see cref="Image.Id"/>, or "front"/"back" as special case).</param>
+    /// <param name="size">The requested image size; <see cref="ImageSize.Original"/> can be any content type, but the thumbnails are always JPEG.</param>
+    /// <returns>The requested image data.</returns>
+    /// <exception cref="WebException">
+    ///   When something went wrong with the request. More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
+    ///   Possibe status codes for the response are:
+    ///   <ul>
+    ///     <li>404 (<see cref="HttpStatusCode.NotFound"/>) when the release and/or the specified image do not exist;</li>
+    ///     <li>503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.</li>
+    ///   </ul>
+    /// </exception>
+    public RawImage FetchImage(Guid mbid, string id, ImageSize size = ImageSize.Original) => this.FetchImage("release", mbid, id, size);
+
+    private RawImage FetchImage(string entity, Guid mbid, string id, ImageSize size) {
       var suffix = string.Empty;
       if (size != ImageSize.Original)
         suffix = string.Concat("-", ((int) size).ToString(CultureInfo.InvariantCulture));
-      var uri = new UriBuilder(this.UrlScheme, this.WebSite, this.Port, $"release/{mbid}/{id}{suffix}");
+      var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}/{id}{suffix}");
       var req = WebRequest.Create(uri.Uri) as HttpWebRequest;
       if (req == null)
         throw new InvalidOperationException("Only HTTP-compatible URL schemes are supported.");
@@ -89,8 +136,34 @@ namespace MetaBrainz.MusicBrainz.CoverArtArchive {
 
     #region Metadata Retrieval
 
-    public ReleaseInfo FetchReleaseInfo(Guid mbid) {
-      var uri = new UriBuilder(this.UrlScheme, this.WebSite, this.Port, $"release/{mbid}");
+    /// <summary>Fetch information about the coverart associated with the specified MusicBrainz release group (if any).</summary>
+    /// <param name="mbid">The MusicBrainz release group ID for which coverart information is requested.</param>
+    /// <returns>A <see cref="Release"/> object containing information about the cover art for the release group's main release.</returns>
+    /// <exception cref="WebException">
+    ///   When something went wrong with the request. More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
+    ///   Possibe status codes for the response are:
+    ///   <ul>
+    ///     <li>404 (<see cref="HttpStatusCode.NotFound"/>) when the release group does not exist (or has no associated coverart);</li>
+    ///     <li>503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.</li>
+    ///   </ul>
+    /// </exception>
+    public Release FetchGroupRelease(Guid mbid) => this.FetchRelease("release-group", mbid);
+
+    /// <summary>Fetch information about the coverart associated with the specified MusicBrainz release (if any).</summary>
+    /// <param name="mbid">The MusicBrainz release ID for which coverart information is requested.</param>
+    /// <returns>A <see cref="Release"/> object containing information about the release's cover art.</returns>
+    /// <exception cref="WebException">
+    ///   When something went wrong with the request. More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
+    ///   Possibe status codes for the response are:
+    ///   <ul>
+    ///     <li>404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no associated coverart);</li>
+    ///     <li>503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.</li>
+    ///   </ul>
+    /// </exception>
+    public Release FetchRelease(Guid mbid) => this.FetchRelease("release", mbid);
+
+    private Release FetchRelease(string entity, Guid mbid) {
+      var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}");
       var req = WebRequest.Create(uri.Uri) as HttpWebRequest;
       if (req == null)
         throw new InvalidOperationException("Only HTTP-compatible URL schemes are supported.");
@@ -101,7 +174,7 @@ namespace MetaBrainz.MusicBrainz.CoverArtArchive {
       using (var response = (HttpWebResponse) req.GetResponse()) {
         var stream = response.GetResponseStream();
         if (stream != null) {
-          var encname = response.ContentEncoding;
+          var encname = response.CharacterSet;
           if (string.IsNullOrWhiteSpace(encname))
             encname = "utf-8";
           var enc = Encoding.GetEncoding(encname);
@@ -109,7 +182,7 @@ namespace MetaBrainz.MusicBrainz.CoverArtArchive {
             json = sr.ReadToEnd();
         }
       }
-      return new ReleaseInfo(new JavaScriptSerializer().Deserialize<JsonObjects.Release>(json));
+      return new Release(new JavaScriptSerializer().Deserialize<JsonObjects.Release>(json));
     }
 
     #endregion

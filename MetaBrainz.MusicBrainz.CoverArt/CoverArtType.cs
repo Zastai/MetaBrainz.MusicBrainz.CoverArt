@@ -1,10 +1,13 @@
 ﻿using System;
 
-namespace MetaBrainz.MusicBrainz.CoverArtArchive {
+namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Flag enumeration of the supported image types.</summary>
   [Flags]
   public enum CoverArtType : ulong {
+
+    /// <summary>No cover art type has been set.</summary>
+    None      = 0,
 
     /// <summary>The album cover, this is the front of the packaging of an audio recording (or in the case of a digital release the image associated with it in a digital media store).</summary>
     Front     = 1UL <<  0,
