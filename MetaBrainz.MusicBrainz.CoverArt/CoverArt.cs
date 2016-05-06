@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -132,12 +133,35 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       req.Method    = "GET";
       req.UserAgent = this.UserAgent;
       using (var response = (HttpWebResponse) req.GetResponse()) {
-        if (response.ContentLength > CoverArt.MaxImageSize)
-          throw new ArgumentException($"Retrieving images larger than {CoverArt.MaxImageSize} is not supported.");
-        var bytes = new byte[(int) response.ContentLength];
-        using (var stream = response.GetResponseStream())
-          stream?.Read(bytes, 0, (int) response.ContentLength);
-        return new RawImage(response.ContentType, bytes);
+          if (response.ContentLength > CoverArt.MaxImageSize)
+            throw new ArgumentException($"The requested image is too large ({response.ContentLength} > {CoverArt.MaxImageSize}).");
+        using (var stream = response.GetResponseStream()) {
+          if (stream == null)
+            return null;
+          var reader = new BinaryReader(stream);
+          if (response.ContentLength != -1) {
+            var data = reader.ReadBytes((int) response.ContentLength);
+            // FIXME: What if data.Length does not match response.ContentLength?
+            return new RawImage(response.ContentType, data);
+          }
+          const int chunksize = 8 * 1024;
+          using (var data = new MemoryStream()) {
+            var chunk = reader.ReadBytes(chunksize);
+            while (chunk.Length == chunksize) {
+              data.Write(chunk, 0, chunk.Length);
+              if (data.Length > CoverArt.MaxImageSize) {
+                chunk = null;
+                break;
+              }
+              chunk = reader.ReadBytes(chunksize);
+            }
+            if (chunk != null && chunk.Length != 0)
+              data.Write(chunk, 0, chunk.Length);
+            if (data.Length > CoverArt.MaxImageSize)
+              throw new ArgumentException($"The requested image is too large ({data.Length} > {CoverArt.MaxImageSize}).");
+            return new RawImage(response.ContentType, data.ToArray());
+          }
+        }
       }
     }
 
