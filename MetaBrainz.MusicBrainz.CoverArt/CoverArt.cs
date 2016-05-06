@@ -12,14 +12,21 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     #region Static Fields / Properties
 
+    static CoverArt() {
+      // Mono's C# compiler does not like initializers on auto-properties, so set them up here instead.
+      CoverArt.DefaultPort      = -1;
+      CoverArt.DefaultUserAgent = null;
+      CoverArt.DefaultWebSite   = "coverartarchive.org";
+    }
+
     /// <summary>The default port number to use for requests (-1 to not specify any explicit port).</summary>
-    public static int DefaultPort { get; set; } = -1;
+    public static int    DefaultPort      { get; set; }
 
     /// <summary>The default user agent to use for requests.</summary>
-    public static string DefaultUserAgent { get; set; } = null;
+    public static string DefaultUserAgent { get; set; }
 
     /// <summary>The default web site to use for requests.</summary>
-    public static string DefaultWebSite { get; set; } = "coverartarchive.org";
+    public static string DefaultWebSite   { get; set; }
 
     // TODO: Tune downwards.
     private const int MaxImageSize = int.MaxValue;
@@ -32,7 +39,9 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     /// <param name="userAgent">The user agent to use for all requests.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="userAgent"/> is null, and no default was set via <see cref="DefaultUserAgent"/>.</exception>
     public CoverArt(string userAgent = null) {
+      this.Port      =              CoverArt.DefaultPort;
       this.UserAgent = userAgent ?? CoverArt.DefaultUserAgent;
+      this.WebSite   =              CoverArt.DefaultWebSite;
       if (this.UserAgent == null)
         throw new ArgumentNullException(nameof(userAgent));
       // libcoverart replaces all dashes by slashes; but that turns valid user agents like "CERN-LineMode/2.15" into invalid ones ("CERN/LineMode/2.15")
@@ -43,13 +52,13 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     #region Instance Fields / Properties
 
     /// <summary>The port number to use for requests (-1 to not specify any explicit port).</summary>
-    public int Port { get; set; } = CoverArt.DefaultPort;
+    public int Port { get; set; }
 
     /// <summary>The user agent to use for all requests.</summary>
     public string UserAgent { get; }
 
     /// <summary>The web site to use for requests.</summary>
-    public string WebSite { get; set; } = CoverArt.DefaultWebSite;
+    public string WebSite { get; set; }
 
     #endregion
 
