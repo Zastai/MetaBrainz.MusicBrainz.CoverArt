@@ -49,7 +49,6 @@
     <Compile Include="CoverArtType.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="ImageSize.cs" />
-    <Compile Include="JsonObjects.cs" />
     <Compile Include="RawImage.cs" />
     <Compile Include="Release.cs" />
     <Compile Include="Thumbnails.cs" />

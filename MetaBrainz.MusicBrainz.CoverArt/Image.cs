@@ -1,21 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Information about an image from the CoverArt Archive.</summary>
   public sealed class Image {
-
-    internal Image(JsonObjects.Image json) {
-      this.Approved   = json.approved;
-      this.Back       = json.back;
-      this.Comment    = json.comment;
-      this.Edit       = json.edit;
-      this.Front      = json.front;
-      this.Id         = json.id;
-      this.Location   = json.image;
-      this.Thumbnails = new Thumbnails(json.thumbnails);
-      this.Types      = (CoverArtType) Enum.Parse(typeof(CoverArtType), string.Join(",", json.types), false);
-    }
 
     /// <summary>Flag indicating whether or not the image is approved.</summary>
     public bool         Approved   { get; }
@@ -45,6 +34,41 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     /// <summary>The cover art type(s) matching this image.</summary>
     public CoverArtType Types      { get; }
+
+    #region JSON-Based Construction
+
+    internal Image(JSON json) {
+      this.Approved   = json.approved;
+      this.Back       = json.back;
+      this.Comment    = json.comment;
+      this.Edit       = json.edit;
+      this.Front      = json.front;
+      this.Id         = json.id;
+      this.Location   = json.image;
+      this.Thumbnails = new Thumbnails(json.thumbnails);
+      this.Types      = (CoverArtType) Enum.Parse(typeof(CoverArtType), string.Join(",", json.types), false);
+    }
+
+    // This class is created by a deserializer, so there's no point in complaining that its fields are uninitialized.
+    #pragma warning disable 649
+
+    // The field names explicitly match the JSON tags.
+    // ReSharper disable InconsistentNaming
+
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    internal sealed class JSON {
+      public string          id;
+      public Uri             image;
+      public bool            back;
+      public Thumbnails.JSON thumbnails;
+      public string[]        types;
+      public string          comment;
+      public uint            edit;
+      public bool            front;
+      public bool            approved;
+    }
+
+    #endregion
 
   }
 

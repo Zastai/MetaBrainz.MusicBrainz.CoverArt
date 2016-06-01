@@ -214,7 +214,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
             json = sr.ReadToEnd();
         }
       }
-      return new Release(new JavaScriptSerializer().Deserialize<JsonObjects.Release>(json));
+      return new Release(new JavaScriptSerializer().Deserialize<Release.JSON>(json));
     }
 
     #endregion
