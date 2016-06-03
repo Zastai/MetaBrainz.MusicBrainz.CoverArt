@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Web.Script.Serialization;
 
@@ -201,7 +202,10 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
         throw new InvalidOperationException("Only HTTP-compatible URL schemes are supported.");
       req.Accept    = "application/json";
       req.Method    = "GET";
-      req.UserAgent = this.UserAgent;
+      {
+        var an = Assembly.GetExecutingAssembly().GetName();
+        req.UserAgent = $"{this.UserAgent} {an.Name}/v{an.Version}";
+      }
       var json = string.Empty;
       using (var response = (HttpWebResponse) req.GetResponse()) {
         var stream = response.GetResponseStream();
