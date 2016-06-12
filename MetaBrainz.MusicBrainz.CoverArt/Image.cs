@@ -52,9 +52,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     // This class is created by a deserializer, so there's no point in complaining that its fields are uninitialized.
     #pragma warning disable 649
 
-    // The field names explicitly match the JSON tags.
-    // ReSharper disable InconsistentNaming
-
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal sealed class JSON {
       public string          id;
