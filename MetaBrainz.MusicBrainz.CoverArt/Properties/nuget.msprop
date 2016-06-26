@@ -5,6 +5,6 @@
     <NuGetPackageDescription>This package provides classes for accessing the CoverArt Archive (CAA), enabling the retrieval of cover art for music releases based on their MusicBrainz ID.</NuGetPackageDescription>
     <NuGetPackageSummary>C# implementation of libcoverart</NuGetPackageSummary>
     <NuGetPackageTags>MusicBrainz album cover art archive CAA libcoverart</NuGetPackageTags>
-    <NuGetPackageVersion>0.1.0</NuGetPackageVersion>
+    <NuGetPackageVersion>0.2.0-dev</NuGetPackageVersion>
   </PropertyGroup>
 </Project>
