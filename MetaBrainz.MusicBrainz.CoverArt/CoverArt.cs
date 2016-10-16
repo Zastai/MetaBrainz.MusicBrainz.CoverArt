@@ -5,7 +5,8 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Web.Script.Serialization;
+
+using Newtonsoft.Json;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
@@ -232,7 +233,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
             json = sr.ReadToEnd();
         }
       }
-      return new Release(new JavaScriptSerializer().Deserialize<Release.JSON>(json));
+      return new Release(JsonConvert.DeserializeObject<Release.JSON>(json));
     }
 
     #endregion

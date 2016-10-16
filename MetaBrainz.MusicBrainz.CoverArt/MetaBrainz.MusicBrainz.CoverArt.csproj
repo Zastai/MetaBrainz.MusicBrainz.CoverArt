@@ -40,10 +40,13 @@
     <AssemblyOriginatorKeyFile>..\MusicBrainz.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\nuget.msprop" />
@@ -58,6 +61,9 @@
     <Compile Include="Release.cs" />
     <Compile Include="Thumbnails.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -66,7 +72,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="$(MSBuildThisFileDirectory)\..\nuget\nuget.msprop"/>
-  <Import Project="$(MSBuildThisFileDirectory)\Properties\nuget.msprop"/>
-  <Import Project="$(MSBuildThisFileDirectory)\..\nuget\nuget.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)\..\nuget\nuget.msprop" />
+  <Import Project="$(MSBuildThisFileDirectory)\Properties\nuget.msprop" />
+  <Import Project="$(MSBuildThisFileDirectory)\..\nuget\nuget.targets" />
 </Project>
