@@ -51,16 +51,62 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     /// <summary>Creates a new instance of the <see cref="T:CoverArt"/> class.</summary>
     /// <param name="userAgent">The user agent to use for all requests.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="userAgent"/> is null, and no default was set via <see cref="DefaultUserAgent"/>.</exception>
+    /// <exception cref="ArgumentException">When the user agent (whether from <paramref name="userAgent"/> or <see cref="DefaultUserAgent"/>) is blank.</exception>
     public CoverArt(string userAgent = null) {
-      this.Port      =              CoverArt.DefaultPort;
-      this.UserAgent = userAgent ?? CoverArt.DefaultUserAgent;
-      this.WebSite   =              CoverArt.DefaultWebSite;
-      if (this.UserAgent == null)
-        throw new ArgumentNullException(nameof(userAgent));
       // libcoverart replaces all dashes by slashes; but that turns valid user agents like "CERN-LineMode/2.15" into invalid ones ("CERN/LineMode/2.15")
-      {
+      this.UserAgent = userAgent ?? CoverArt.DefaultUserAgent;
+      if (this.UserAgent == null) throw new ArgumentNullException(nameof(userAgent));
+      if (string.IsNullOrWhiteSpace(userAgent)) throw new ArgumentException("The user agent must not be blank.", nameof(userAgent));
+      // Simple Defaults
+      this.Port      = CoverArt.DefaultPort;
+      this.WebSite   = CoverArt.DefaultWebSite;
+      { // Set full user agent, including this library's information
         var an = Assembly.GetExecutingAssembly().GetName();
-        this._fullUserAgent = $"{this.UserAgent} {an.Name}/v{an.Version} ({CoverArt.UserAgentUrl})";
+        this._fullUserAgent = $"{this.UserAgent} {an.Name}/{an.Version} ({CoverArt.UserAgentUrl})";
+      }
+    }
+
+    /// <summary>Creates a new instance of the <see cref="T:CoverArt"/> class.</summary>
+    /// <param name="application">The applciation name to use in the user agent property for all requests.</param>
+    /// <param name="version">The version number to use in the user agent property for all requests.</param>
+    /// <param name="contact">The contact address (typically HTTP or MAILTO) to use in the user agent property for all requests.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="application"/>, <paramref name="version"/> and/or <paramref name="contact"/> are null.</exception>
+    /// <exception cref="ArgumentException">When <paramref name="application"/> is blank.</exception>
+    public CoverArt(string application, Version version, Uri contact) {
+      if (application == null) throw new ArgumentNullException(nameof(application));
+      if (version     == null) throw new ArgumentNullException(nameof(version));
+      if (contact     == null) throw new ArgumentNullException(nameof(contact));
+      if (string.IsNullOrWhiteSpace(application)) throw new ArgumentException("The application name must not be blank.", nameof(application));
+      this.UserAgent = $"{application}/{version} ({contact})";
+      // Simple Defaults
+      this.Port      = CoverArt.DefaultPort;
+      this.WebSite   = CoverArt.DefaultWebSite;
+      { // Set full user agent, including this library's information
+        var an = Assembly.GetExecutingAssembly().GetName();
+        this._fullUserAgent = $"{this.UserAgent} {an.Name}/{an.Version} ({CoverArt.UserAgentUrl})";
+      }
+    }
+
+    /// <summary>Creates a new instance of the <see cref="T:CoverArt"/> class.</summary>
+    /// <param name="application">The applciation name to use in the user agent property for all requests.</param>
+    /// <param name="version">The version number to use in the user agent property for all requests.</param>
+    /// <param name="contact">The contact address (typically a URL or email address) to use in the user agent property for all requests.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="application"/>, <paramref name="version"/> and/or <paramref name="contact"/> are null.</exception>
+    /// <exception cref="ArgumentException">When <paramref name="application"/>, <paramref name="version"/> and/or <paramref name="contact"/> are blank.</exception>
+    public CoverArt(string application, string version, string contact) {
+      if (application == null) throw new ArgumentNullException(nameof(application));
+      if (version     == null) throw new ArgumentNullException(nameof(version));
+      if (contact     == null) throw new ArgumentNullException(nameof(contact));
+      if (string.IsNullOrWhiteSpace(application)) throw new ArgumentException("The application name must not be blank.", nameof(application));
+      if (string.IsNullOrWhiteSpace(version    )) throw new ArgumentException("The version number must not be blank.",   nameof(version));
+      if (string.IsNullOrWhiteSpace(contact    )) throw new ArgumentException("The contact address must not be blank.",  nameof(contact));
+      this.UserAgent = $"{application}/{version} ({contact})";
+      // Simple Defaults
+      this.Port      = CoverArt.DefaultPort;
+      this.WebSite   = CoverArt.DefaultWebSite;
+      { // Set full user agent, including this library's information
+        var an = Assembly.GetExecutingAssembly().GetName();
+        this._fullUserAgent = $"{this.UserAgent} {an.Name}/{an.Version} ({CoverArt.UserAgentUrl})";
       }
     }
 
