@@ -7,7 +7,7 @@
     </NuGetPackageReleaseNotes>
     <NuGetPackageSummary>C# implementation of libcoverart</NuGetPackageSummary>
     <NuGetPackageTags>MusicBrainz album cover art archive CAA libcoverart</NuGetPackageTags>
-    <NuGetPackageVersion>0.2.0</NuGetPackageVersion>
+    <NuGetPackageVersion>0.3.0-dev</NuGetPackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <NuGetDependencies Include="Newtonsoft.Json">
