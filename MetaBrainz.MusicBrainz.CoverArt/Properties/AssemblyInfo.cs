@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle        ("MetaBrainz.MusicBrainz.CoverArt")]
@@ -8,6 +9,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright    ("Copyright © Tim Van Holder 2016")]
 
 [assembly: ComVisible(false)]
+
+[assembly: CLSCompliant(true)]
 
 [assembly: AssemblyVersion    ("0.3")]
 [assembly: AssemblyFileVersion("0.3.0")]

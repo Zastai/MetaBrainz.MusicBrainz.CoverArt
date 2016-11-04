@@ -25,13 +25,13 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     }
 
     /// <summary>The default port number to use for requests (-1 to not specify any explicit port).</summary>
-    public static int    DefaultPort      { get; set; }
+    public static int DefaultPort { get; set; }
 
     /// <summary>The default user agent to use for requests.</summary>
     public static string DefaultUserAgent { get; set; }
 
     /// <summary>The default web site to use for requests.</summary>
-    public static string DefaultWebSite   { get; set; }
+    public static string DefaultWebSite { get; set; }
 
     /// <summary>The maximum allowed image size; an exception is thrown if a response larger than this is received from the CoverArt Archive.</summary>
     /// <remarks>
@@ -214,6 +214,11 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     #region Internals
 
+    private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings {
+      CheckAdditionalContent = true,
+      MissingMemberHandling  = MissingMemberHandling.Error
+    };
+
     private readonly string _fullUserAgent;
 
     private RawImage FetchImage(string entity, Guid mbid, string id, ImageSize size) {
@@ -279,7 +284,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
             json = sr.ReadToEnd();
         }
       }
-      return new Release(JsonConvert.DeserializeObject<Release.JSON>(json));
+      return JsonConvert.DeserializeObject<Release>(json, CoverArt.SerializerSettings);
     }
 
     #endregion

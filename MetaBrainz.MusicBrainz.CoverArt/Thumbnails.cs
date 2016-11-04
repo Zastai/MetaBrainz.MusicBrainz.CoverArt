@@ -1,42 +1,30 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
+using Newtonsoft.Json;
+
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Class representing the thumbnails available for an <see cref="Image"/>.</summary>
+  [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
   [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
   [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+  [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+  [SuppressMessage("ReSharper", "UnusedMember.Global")]
+  [JsonObject(MemberSerialization.OptIn)]
   public sealed class Thumbnails {
 
     /// <summary>The URI for the small (250px) thumbnail of the image, if available.</summary>
-    public Uri Small { get; }
+    [JsonProperty("small")]
+    public Uri Small { get; private set; }
 
     /// <summary>The URI for the large (500px) thumbnail of the image, if available.</summary>
-    public Uri Large { get; }
+    [JsonProperty("large")]
+    public Uri Large { get; private set; }
 
     /// <summary>The URI for the huge (1200px) "thumbnail" of the image, if available.</summary>
-    public Uri Huge { get; }
-
-    #region JSON-Based Construction
-
-    internal Thumbnails(JSON json) {
-      this.Small = json.small;
-      this.Large = json.large;
-      this.Huge  = json.huge;
-    }
-
-    // This class is created by a deserializer, so there's no point in complaining that its fields are uninitialized.
-    #pragma warning disable 649
-
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-    internal sealed class JSON {
-      public Uri small;
-      public Uri large;
-      public Uri huge;
-    }
-
-    #endregion
+    [JsonProperty("huge")]
+    public Uri Huge { get; private set; }
 
   }
 
