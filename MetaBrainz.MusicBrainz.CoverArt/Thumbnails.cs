@@ -4,6 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Class representing the thumbnails available for an <see cref="Image"/>.</summary>
+  [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+  [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
   public sealed class Thumbnails {
 
     /// <summary>The URI for the small (250px) thumbnail of the image, if available.</summary>

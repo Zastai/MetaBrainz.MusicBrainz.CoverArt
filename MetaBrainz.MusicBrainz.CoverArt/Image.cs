@@ -4,6 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Information about an image from the CoverArt Archive.</summary>
+  [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+  [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
   public sealed class Image {
 
     /// <summary>Flag indicating whether or not the image is approved.</summary>

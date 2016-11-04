@@ -6,6 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Class representing a release on the CoverArt Archive.</summary>
+  [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+  [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
   public class Release {
 
     /// <summary>The images available for the release.</summary>

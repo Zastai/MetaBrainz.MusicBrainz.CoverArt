@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>The raw bytes and accompanying content type for an image downloaded from the CoverArt Archive.</summary>
+  [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+  [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+  [SuppressMessage("ReSharper", "UnusedMember.Global")]
   public sealed class RawImage : IDisposable {
 
     internal RawImage(string type, byte[] data) {
@@ -27,14 +31,14 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     #region IDisposable
 
-    private bool disposed = false;
+    private bool _disposed;
 
     private void Dispose(bool disposing) {
-      if (this.disposed)
+      if (this._disposed)
         return;
       if (disposing)
         this.Data.Dispose();
-      this.disposed = true;
+      this._disposed = true;
     }
 
     /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
