@@ -6,6 +6,12 @@ using Newtonsoft.Json;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
+  #if NETFX_LT_4_5
+  using StringList = IEnumerable<string>;
+  #else
+  using StringList = IReadOnlyList<string>;
+  #endif
+
   /// <summary>Information about an image from the CoverArt Archive.</summary>
   [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
   [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -51,7 +57,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     /// <summary>The cover art type(s) matching this image, expressed as text.</summary>
     [JsonProperty("types")] 
-    public IEnumerable<string> TypeStrings { get; private set; }
+    public StringList TypeStrings { get; private set; }
 
     /// <summary>The cover art type(s) matching this image, expressed as an enumeration value.</summary>
     public CoverArtType Types => this._types ?? (this._types = (CoverArtType) Enum.Parse(typeof(CoverArtType), string.Join(",", this.TypeStrings), false)).Value;

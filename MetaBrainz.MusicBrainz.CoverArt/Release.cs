@@ -6,6 +6,12 @@ using Newtonsoft.Json;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
+  #if NETFX_LT_4_5
+  using ImageList = IEnumerable<Image>;
+  #else
+  using ImageList = IReadOnlyList<Image>;
+  #endif
+
   /// <summary>Class representing a release on the CoverArt Archive.</summary>
   [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
   [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -17,7 +23,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     /// <summary>The images available for the release.</summary>
     [JsonProperty("images")]
-    public IEnumerable<Image> Images { get; private set; }
+    public ImageList Images { get; private set; }
 
     /// <summary>The URL on the MusicBrainz website where more information about the release can be found.</summary>
     [JsonProperty("release")]
