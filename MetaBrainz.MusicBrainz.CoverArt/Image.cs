@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
+#if NETFX_EQ_3_5
+using System.Linq;
+#endif
+
 using Newtonsoft.Json;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
@@ -60,7 +64,26 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     public StringList TypeStrings { get; private set; }
 
     /// <summary>The cover art type(s) matching this image, expressed as an enumeration value.</summary>
-    public CoverArtType Types => this._types ?? (this._types = (CoverArtType) Enum.Parse(typeof(CoverArtType), string.Join(",", this.TypeStrings), false)).Value;
+    public CoverArtType Types {
+      get {
+        if (!this._types.HasValue) {
+#if NETFX_LT_3_5
+          var types = string.Empty;
+          foreach (var type in this.TypeStrings) {
+            if (types.Length != 0)
+              types += ',';
+            types += type;
+          }
+#elif NETFX_EQ_3_5
+          var types = string.Join(",", this.TypeStrings.ToArray());
+#else
+          var types = string.Join(",", this.TypeStrings);
+#endif
+          this._types = (CoverArtType) Enum.Parse(typeof(CoverArtType), types, false);
+        }
+        return this._types.Value;
+      }
+    }
 
     private CoverArtType? _types;
 
