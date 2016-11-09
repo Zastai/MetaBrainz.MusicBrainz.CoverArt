@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{59B631FF-FF1E-40B6-BA82-12FEB35C2A5C}</ProjectGuid>
+    <ProjectGuid>{59B631FF-FF1E-40B6-BA82-12FEB35C2A35}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MetaBrainz.MusicBrainz.CoverArt</RootNamespace>
@@ -17,31 +17,24 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\MusicBrainz.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+  <Import Project="..\build\Common.msprop" />
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net35\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net35\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -51,19 +44,18 @@
     <Content Include="Properties\nuget.msprop" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\$(MSBuildProjectName)\Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\$(MSBuildProjectName)\CoverArt.cs" />
-    <Compile Include="..\..\$(MSBuildProjectName)\CoverArtType.cs" />
-    <Compile Include="..\..\$(MSBuildProjectName)\Image.cs" />
-    <Compile Include="..\..\$(MSBuildProjectName)\ImageSize.cs" />
-    <Compile Include="..\..\$(MSBuildProjectName)\RawImage.cs" />
-    <Compile Include="..\..\$(MSBuildProjectName)\Release.cs" />
-    <Compile Include="..\..\$(MSBuildProjectName)\Thumbnails.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CoverArt.cs" />
+    <Compile Include="CoverArtType.cs" />
+    <Compile Include="Image.cs" />
+    <Compile Include="ImageSize.cs" />
+    <Compile Include="RawImage.cs" />
+    <Compile Include="Release.cs" />
+    <Compile Include="Thumbnails.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.$(MSBuildProjectName).config" />
   </ItemGroup>
-  <Import Project="..\FrameworkVersion.DefineConstants.msprop" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -72,7 +64,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\..\nuget\nuget.msprop" />
-  <Import Project="..\..\$(MSBuildProjectName)\Properties\nuget.msprop" />
-  <Import Project="..\..\nuget\nuget.targets" />
+  <Import Project="..\nuget\nuget.msprop" />
+  <Import Project="Properties\nuget.msprop" />
+  <Import Project="..\nuget\nuget.targets" />
 </Project>
