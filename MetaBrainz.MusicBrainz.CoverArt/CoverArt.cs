@@ -56,7 +56,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       // libcoverart replaces all dashes by slashes; but that turns valid user agents like "CERN-LineMode/2.15" into invalid ones ("CERN/LineMode/2.15")
       this.UserAgent = userAgent ?? CoverArt.DefaultUserAgent;
       if (this.UserAgent == null) throw new ArgumentNullException(nameof(userAgent));
-      if (string.IsNullOrWhiteSpace(userAgent)) throw new ArgumentException("The user agent must not be blank.", nameof(userAgent));
+      if (this.UserAgent.Trim().Length == 0) throw new ArgumentException("The user agent must not be blank.", nameof(userAgent));
       // Simple Defaults
       this.Port      = CoverArt.DefaultPort;
       this.WebSite   = CoverArt.DefaultWebSite;
@@ -76,7 +76,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       if (application == null) throw new ArgumentNullException(nameof(application));
       if (version     == null) throw new ArgumentNullException(nameof(version));
       if (contact     == null) throw new ArgumentNullException(nameof(contact));
-      if (string.IsNullOrWhiteSpace(application)) throw new ArgumentException("The application name must not be blank.", nameof(application));
+      if (application.Trim().Length == 0) throw new ArgumentException("The application name must not be blank.", nameof(application));
       this.UserAgent = $"{application}/{version} ({contact})";
       // Simple Defaults
       this.Port      = CoverArt.DefaultPort;
@@ -97,9 +97,9 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       if (application == null) throw new ArgumentNullException(nameof(application));
       if (version     == null) throw new ArgumentNullException(nameof(version));
       if (contact     == null) throw new ArgumentNullException(nameof(contact));
-      if (string.IsNullOrWhiteSpace(application)) throw new ArgumentException("The application name must not be blank.", nameof(application));
-      if (string.IsNullOrWhiteSpace(version    )) throw new ArgumentException("The version number must not be blank.",   nameof(version));
-      if (string.IsNullOrWhiteSpace(contact    )) throw new ArgumentException("The contact address must not be blank.",  nameof(contact));
+      if (application.Trim().Length == 0) throw new ArgumentException("The application name must not be blank.", nameof(application));
+      if (version    .Trim().Length == 0) throw new ArgumentException("The version number must not be blank.",   nameof(version));
+      if (contact    .Trim().Length == 0) throw new ArgumentException("The contact address must not be blank.",  nameof(contact));
       this.UserAgent = $"{application}/{version} ({contact})";
       // Simple Defaults
       this.Port      = CoverArt.DefaultPort;
@@ -277,7 +277,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
         var stream = response.GetResponseStream();
         if (stream != null) {
           var encname = response.CharacterSet;
-          if (string.IsNullOrWhiteSpace(encname))
+          if (encname == null || encname.Trim().Length == 0)
             encname = "utf-8";
           var enc = Encoding.GetEncoding(encname);
           using (var sr = new StreamReader(stream, enc))
