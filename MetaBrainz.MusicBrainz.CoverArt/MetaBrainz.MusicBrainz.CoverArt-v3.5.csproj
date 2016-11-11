@@ -41,9 +41,6 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Properties\nuget.msprop" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CoverArt.cs" />
     <Compile Include="CoverArtType.cs" />
