@@ -10,9 +10,9 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
   [SuppressMessage("ReSharper", "UnusedMember.Global")]
   public sealed class RawImage : IDisposable {
 
-    internal RawImage(string type, byte[] data) {
+    internal RawImage(string type, MemoryStream data) {
       this.ContentType = type;
-      this.Data        = new MemoryStream(data, false);
+      this.Data        = data;
     }
 
     /// <summary>The content type for the image.</summary>

@@ -1,6 +1,7 @@
 ﻿#if NETFX_GE_4_5 // HttpWebRequest only has GetResponseAsync in v4.5 and up
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -108,70 +109,59 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     #region Internals
 
-    private async Task<RawImage> FetchImageAsync(string entity, Guid mbid, string id, ImageSize size) {
-      var suffix = string.Empty;
-      if (size != ImageSize.Original)
-        suffix = string.Concat("-", ((int) size).ToString(CultureInfo.InvariantCulture));
-      var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}/{id}{suffix}");
-      var req = WebRequest.Create(uri.Uri) as HttpWebRequest;
-      if (req == null)
-        throw new InvalidOperationException("Only HTTP-compatible URL schemes are supported.");
-      req.Method    = "GET";
-      req.UserAgent = this._fullUserAgent;
-      using (var response = (HttpWebResponse) await req.GetResponseAsync().ConfigureAwait(false)) {
-          if (response.ContentLength > CoverArt.MaxImageSize)
-            throw new ArgumentException($"The requested image is too large ({response.ContentLength} > {CoverArt.MaxImageSize}).");
-        using (var stream = response.GetResponseStream()) {
-          if (stream == null)
-            return null;
-          var reader = new BinaryReader(stream);
-          if (response.ContentLength != -1) {
-            var data = reader.ReadBytes((int) response.ContentLength);
-            // FIXME: What if data.Length does not match response.ContentLength?
-            return new RawImage(response.ContentType, data);
-          }
-          const int chunksize = 8 * 1024;
-          using (var data = new MemoryStream()) {
-            var chunk = reader.ReadBytes(chunksize);
-            while (chunk.Length == chunksize) {
-              data.Write(chunk, 0, chunk.Length);
-              if (data.Length > CoverArt.MaxImageSize) {
-                chunk = null;
-                break;
-              }
-              chunk = reader.ReadBytes(chunksize);
-            }
-            if (chunk != null && chunk.Length != 0)
-              data.Write(chunk, 0, chunk.Length);
-            if (data.Length > CoverArt.MaxImageSize)
-              throw new ArgumentException($"The requested image is too large ({data.Length} > {CoverArt.MaxImageSize}).");
-            return new RawImage(response.ContentType, data.ToArray());
-          }
-        }
-      }
-    }
-
-    private async Task<Release> FetchReleaseAsync(string entity, Guid mbid) {
-      var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}");
-      var req = WebRequest.Create(uri.Uri) as HttpWebRequest;
+    private async Task<HttpWebResponse> PerformRequestAsync(Uri uri) {
+      Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {uri}");
+      var req = WebRequest.Create(uri) as HttpWebRequest;
       if (req == null)
         throw new InvalidOperationException("Only HTTP-compatible URL schemes are supported.");
       req.Accept    = "application/json";
       req.Method    = "GET";
       req.UserAgent = this._fullUserAgent;
-      var json = string.Empty;
-      using (var response = (HttpWebResponse) await req.GetResponseAsync().ConfigureAwait(false)) {
-        var stream = response.GetResponseStream();
-        if (stream != null) {
-          var encname = response.CharacterSet;
-          if (encname == null || encname.Trim().Length == 0)
-            encname = "utf-8";
-          var enc = Encoding.GetEncoding(encname);
-          using (var sr = new StreamReader(stream, enc))
-            json = sr.ReadToEnd();
+      return (HttpWebResponse) await req.GetResponseAsync().ConfigureAwait(false);
+    }
+
+    private async Task<RawImage> FetchImageAsync(string entity, Guid mbid, string id, ImageSize size) {
+      var suffix = string.Empty;
+      if (size != ImageSize.Original)
+        suffix = "-" + ((int) size).ToString(CultureInfo.InvariantCulture);
+      var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}/{id}{suffix}").Uri;
+      using (var response = await this.PerformRequestAsync(uri).ConfigureAwait(false)) {
+        Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
+        if (response.ContentLength > CoverArt.MaxImageSize)
+          throw new ArgumentException($"The requested image is too large ({response.ContentLength} > {CoverArt.MaxImageSize}).");
+        using (var stream = response.GetResponseStream()) {
+          if (stream == null)
+            return null;
+          var data = new MemoryStream();
+          try {
+            await stream.CopyToAsync(data).ConfigureAwait(false);
+          }
+          catch {
+            data.Dispose();
+            throw;
+          }
+          return new RawImage(response.ContentType, data);
         }
       }
-      return JsonConvert.DeserializeObject<Release>(json, CoverArt.SerializerSettings);
+    }
+
+    private async Task<Release> FetchReleaseAsync(string entity, Guid mbid) {
+      var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}").Uri;
+      using (var response = await this.PerformRequestAsync(uri).ConfigureAwait(false)) {
+        var stream = response.GetResponseStream();
+        if (stream == null)
+          throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
+        var encname = response.CharacterSet;
+        if (encname == null || encname.Trim().Length == 0)
+          encname = "utf-8";
+        var enc = Encoding.GetEncoding(encname);
+        using (var sr = new StreamReader(stream, enc)) {
+          var json = await sr.ReadToEndAsync().ConfigureAwait(false);
+          Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): <<\n{JsonConvert.DeserializeObject(json)}\n>>");
+          return JsonConvert.DeserializeObject<Release>(json, CoverArt.SerializerSettings);
+        }
+      }
+      
     }
 
     #endregion
