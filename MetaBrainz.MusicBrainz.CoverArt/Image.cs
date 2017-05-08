@@ -10,10 +10,10 @@ using Newtonsoft.Json;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
-  #if NETFX_LT_4_5
-  using StringList = IEnumerable<string>;
-  #else
+  #if NETFX_GE_4_5
   using StringList = IReadOnlyList<string>;
+  #else
+  using StringList = IEnumerable<string>;
   #endif
 
   /// <summary>Information about an image from the CoverArt Archive.</summary>
@@ -67,17 +67,17 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     public CoverArtType Types {
       get {
         if (!this._types.HasValue) {
-#if NETFX_LT_3_5
+#if NETFX_GT_3_5
+          var types = string.Join(",", this.TypeStrings);
+#elif NETFX_EQ_3_5
+          var types = string.Join(",", this.TypeStrings.ToArray());
+#else
           var types = string.Empty;
           foreach (var type in this.TypeStrings) {
             if (types.Length != 0)
               types += ',';
             types += type;
           }
-#elif NETFX_EQ_3_5
-          var types = string.Join(",", this.TypeStrings.ToArray());
-#else
-          var types = string.Join(",", this.TypeStrings);
 #endif
           this._types = (CoverArtType) Enum.Parse(typeof(CoverArtType), types, false);
         }

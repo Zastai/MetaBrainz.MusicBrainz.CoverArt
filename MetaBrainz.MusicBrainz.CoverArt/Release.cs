@@ -6,10 +6,10 @@ using Newtonsoft.Json;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
-  #if NETFX_LT_4_5
-  using ImageList = IEnumerable<Image>;
-  #else
+  #if NETFX_GE_4_5
   using ImageList = IReadOnlyList<Image>;
+  #else
+  using ImageList = IEnumerable<Image>;
   #endif
 
   /// <summary>Class representing a release on the CoverArt Archive.</summary>
