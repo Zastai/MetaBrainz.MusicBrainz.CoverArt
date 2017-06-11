@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if (NETFX_TARGET && NETFX_GE_4_5) || (NETSTD_TARGET) || (NETCORE_TARGET)
+
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -167,3 +169,5 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
   }
 
 }
+
+#endif
