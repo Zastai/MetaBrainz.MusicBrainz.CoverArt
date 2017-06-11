@@ -1,4 +1,4 @@
-﻿#if (NETFX_TARGET && NETFX_GE_4_5) || (NETSTD_TARGET) || (NETCORE_TARGET)
+﻿#if NETFX_GE_4_5
 
 using System;
 using System.Diagnostics;
