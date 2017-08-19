@@ -21,6 +21,8 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     /// <summary>The image's raw data.</summary>
     public readonly Stream Data;
 
+    #if NETFX_TARGET // Only the .NET Framework has System.Drawing.Image
+
     /// <summary>Attempts to create an <see cref="System.Drawing.Image"/> from <see cref="Data"/>.</summary>
     /// <returns>A newly-constructed <see cref="System.Drawing.Image"/>.</returns>
     /// <remarks>This complete ignores <see cref="ContentType"/>.</remarks>
@@ -28,6 +30,8 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     public System.Drawing.Image Decode(bool useEmbeddedColorManagement = false, bool validateImageData = false) {
       return System.Drawing.Image.FromStream(this.Data, useEmbeddedColorManagement, validateImageData);
     }
+
+    #endif
 
     #region IDisposable
 

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
-  #if NETFX_GE_4_5
+  #if NETFX_GE_4_5 || NETSTD_TARGET || NETCORE_TARGET
   using ImageList = IReadOnlyList<Image>;
   #else
   using ImageList = IEnumerable<Image>;
