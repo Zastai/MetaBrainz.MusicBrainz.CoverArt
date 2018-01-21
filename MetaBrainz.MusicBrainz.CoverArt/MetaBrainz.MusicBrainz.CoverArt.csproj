@@ -8,15 +8,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0</AssemblyVersion>
-    <FileVersion>1.0</FileVersion>
-    <PackageReleaseNotes>
-First official release.
-Dropped support for .NET framework versions before 4.0 (and 4.0 may be dropped in a later version); this allows for builds using .NET Core (which cannot target 2.0/3.5).
-Added support for .NET Standard 2.0; the only unsupported API is RawImage.Decode() (because System.Drawing.Image is not available).
-Bumped Newtonsoft.Json to the latest version (10.0.3).
-    </PackageReleaseNotes>
+    <Version>1.1.0-pre</Version>
+    <AssemblyVersion>1.1</AssemblyVersion>
+    <FileVersion>1.1</FileVersion>
+    <PackageReleaseNotes />
   </PropertyGroup>
 
   <ItemGroup>
