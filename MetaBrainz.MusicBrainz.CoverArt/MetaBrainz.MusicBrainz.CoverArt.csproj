@@ -8,13 +8,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.3.0-pre</Version>
-    <AssemblyVersion>0.3</AssemblyVersion>
-    <FileVersion>0.3.0</FileVersion>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0</AssemblyVersion>
+    <FileVersion>1.0</FileVersion>
     <PackageReleaseNotes>
-      Dropped support for .NET framework versions before 4.0 (and 4.0 may be dropped in a later version); this allows for builds using .NET Core (which cannot target 2.0/3.5).
-      Added support for .NET Standard 2.0; the only unsupported API is RawImage.Decode() (because System.Drawing.Image is not available).
-      Bumped Newtonsoft.Json to the latest version (10.0.3).
+First official release.
+Dropped support for .NET framework versions before 4.0 (and 4.0 may be dropped in a later version); this allows for builds using .NET Core (which cannot target 2.0/3.5).
+Added support for .NET Standard 2.0; the only unsupported API is RawImage.Decode() (because System.Drawing.Image is not available).
+Bumped Newtonsoft.Json to the latest version (10.0.3).
     </PackageReleaseNotes>
   </PropertyGroup>
 
@@ -24,9 +25,7 @@
 
   <PropertyGroup>
     <Title>CoverArt Archive Web Service Client Library</Title>
-    <Description>
-      This package provides classes for accessing the CoverArt Archive (CAA), enabling the retrieval of cover art for music releases based on their MusicBrainz ID.
-    </Description>
+    <Description>This package provides classes for accessing the CoverArt Archive (CAA), enabling the retrieval of cover art for music releases based on their MusicBrainz ID.</Description>
     <PackageTags>MusicBrainz album cover art archive CAA libcoverart</PackageTags>
   </PropertyGroup>
 
