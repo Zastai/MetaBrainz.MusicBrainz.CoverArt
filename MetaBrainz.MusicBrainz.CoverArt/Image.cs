@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json;
@@ -62,8 +63,34 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     /// <summary>The cover art type(s) matching this image, expressed as an enumeration value.</summary>
     public CoverArtType Types {
       get {
-        if (!this._types.HasValue)
-          this._types = (CoverArtType) Enum.Parse(typeof(CoverArtType), string.Join(",", this.TypeStrings), false);
+        if (!this._types.HasValue) {
+          var types = CoverArtType.None;
+          // Enum.Parse sadly can't be used, due to the "Raw/Unedited" type, which can't be mapped to an enum value.
+          // So we just do the mapping ourselves here (and make it case insensitive while we're at it, not that that matters much).
+          foreach (var type in this.TypeStrings) {
+            switch (type.ToLowerInvariant()) {
+              case "back":         types |= CoverArtType.Back;        break;
+              case "booklet":      types |= CoverArtType.Booklet;     break;
+              case "front":        types |= CoverArtType.Front;       break;
+              case "liner":        types |= CoverArtType.Liner;       break;
+              case "medium":       types |= CoverArtType.Medium;      break;
+              case "obi":          types |= CoverArtType.Obi;         break;
+              case "other":        types |= CoverArtType.Other;       break;
+              case "poster":       types |= CoverArtType.Poster;      break;
+              case "track":        types |= CoverArtType.Track;       break;
+              case "raw/unedited": types |= CoverArtType.RawUnedited; break;
+              case "spine":        types |= CoverArtType.Spine;       break;
+              case "sticker":      types |= CoverArtType.Sticker;     break;
+              case "tray":         types |= CoverArtType.Tray;        break;
+              case "watermark":    types |= CoverArtType.Watermark;   break;
+              default:
+                // FIXME: Or should this throw an exception?
+                Debug.Print($"+++ Encountered unknown CAA image type '{type}'.");
+                break;
+            }
+          }
+          this._types = types;
+        }
         return this._types.Value;
       }
     }
