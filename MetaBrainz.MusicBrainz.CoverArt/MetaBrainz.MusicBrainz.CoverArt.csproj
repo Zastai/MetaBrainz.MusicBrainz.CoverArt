@@ -8,10 +8,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>1.1.0-pre</Version>
+    <Version>1.1.0</Version>
     <AssemblyVersion>1.1</AssemblyVersion>
     <FileVersion>1.1</FileVersion>
-    <PackageReleaseNotes />
+    <PackageReleaseNotes>
+      Minor API updates.
+      STYLE-980: Handle Raw/Unedited image type.
+      CAA-88: Adjusted thumbnail types. Dropped Huge (huge); added Size250 (250), Size500 (500) and Size1200 (1200).
+      Bumped Newtonsoft.Json to the latest version (11.0.2).
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
