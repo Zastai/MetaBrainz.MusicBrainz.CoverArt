@@ -55,7 +55,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     #region Constructors
 
-    /// <summary>Creates a new instance of the <see cref="T:CoverArt"/> class.</summary>
+    /// <summary>Creates a new instance of the <see cref="CoverArt"/> class.</summary>
     /// <param name="userAgent">The user agent to use for all requests.</param>
     /// <exception cref="ArgumentNullException">When <paramref name="userAgent"/> is null, and no default was set via <see cref="DefaultUserAgent"/>.</exception>
     /// <exception cref="ArgumentException">When the user agent (whether from <paramref name="userAgent"/> or <see cref="DefaultUserAgent"/>) is blank.</exception>
@@ -73,7 +73,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       }
     }
 
-    /// <summary>Creates a new instance of the <see cref="T:CoverArt"/> class.</summary>
+    /// <summary>Creates a new instance of the <see cref="CoverArt"/> class.</summary>
     /// <param name="application">The applciation name to use in the user agent property for all requests.</param>
     /// <param name="version">The version number to use in the user agent property for all requests.</param>
     /// <param name="contact">The contact address (typically HTTP or MAILTO) to use in the user agent property for all requests.</param>
@@ -94,7 +94,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       }
     }
 
-    /// <summary>Creates a new instance of the <see cref="T:CoverArt"/> class.</summary>
+    /// <summary>Creates a new instance of the <see cref="CoverArt"/> class.</summary>
     /// <param name="application">The applciation name to use in the user agent property for all requests.</param>
     /// <param name="version">The version number to use in the user agent property for all requests.</param>
     /// <param name="contact">The contact address (typically a URL or email address) to use in the user agent property for all requests.</param>
