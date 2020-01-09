@@ -1,8 +1,4 @@
-﻿#if NETFX_GE_4_5 || NETSTD_GE_2_0 || NETCORE_GE_2_0
-# define INCLUDE_ASYNC
-#endif
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -285,8 +281,6 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     #endregion
 
-    #if INCLUDE_ASYNC
-
     #region Instance Methods (Async)
 
     /// <summary>Fetch the main "back" image for the specified release.</summary>
@@ -430,12 +424,10 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
           return JsonConvert.DeserializeObject<Release>(json, CoverArt.SerializerSettings);
         }
       }
-      
+
     }
 
     #endregion
-
-    #endif
 
   }
 

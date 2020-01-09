@@ -1,29 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\build\NuGetPackage.props" />
-
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net40;net45</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Version>1.1.2-pre</Version>
-    <AssemblyVersion>1.1</AssemblyVersion>
-    <FileVersion>1.1.2</FileVersion>
-    <PackageReleaseNotes />
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-  </ItemGroup>
-
   <PropertyGroup>
     <Title>CoverArt Archive Web Service Client Library</Title>
     <Description>This package provides classes for accessing the CoverArt Archive (CAA), enabling the retrieval of cover art for music releases based on their MusicBrainz ID.</Description>
     <PackageTags>MusicBrainz album cover art archive CAA libcoverart</PackageTags>
+    <Version>1.1.2-pre</Version>
+    <PackageReleaseNotes />
   </PropertyGroup>
 
-  <Import Project="..\build\NuGetPackage.targets" />
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
+  </ItemGroup>
 
 </Project>
