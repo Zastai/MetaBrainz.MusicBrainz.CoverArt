@@ -12,7 +12,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     None        = 0,
 
     /// <summary>The album cover, this is the front of the packaging of an audio recording (or in the case of a digital release the image associated with it in a digital media store).</summary>
-    Front       = 1L <<  0,
+    Front       = 1L,
 
     /// <summary>The back of the package of an audio recording, this will often contain the track listing, barcode and copyright information.</summary>
     Back        = 1L <<  1,

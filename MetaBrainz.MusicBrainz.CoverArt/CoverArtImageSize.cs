@@ -4,7 +4,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Enumeration indicating the desired size of an image to be fetched from the CoverArt Archive.</summary>
   [SuppressMessage("ReSharper", "UnusedMember.Global")]
-  public enum ImageSize {
+  public enum CoverArtImageSize {
 
     /// <summary>The original image as uploaded. This can be of any size or media type.</summary>
     Original = 0,

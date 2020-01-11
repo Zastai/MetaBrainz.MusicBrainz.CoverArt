@@ -5,17 +5,17 @@
     <Title>CoverArt Archive Web Service Client Library</Title>
     <Description>This package provides classes for accessing the CoverArt Archive (CAA), enabling the retrieval of cover art for music releases based on their MusicBrainz ID.</Description>
     <PackageTags>MusicBrainz album cover art archive CAA libcoverart</PackageTags>
-    <Version>1.1.2-pre</Version>
+    <Version>2.0-pre</Version>
     <PackageReleaseNotes />
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;netcoreapp3.1;netcoreapp2.1;net48;net472;net461</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.Text.Json" Version="4.7.0" />
   </ItemGroup>
 
 </Project>
