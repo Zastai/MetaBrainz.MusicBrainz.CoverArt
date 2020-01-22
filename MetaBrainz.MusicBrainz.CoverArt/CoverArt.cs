@@ -391,14 +391,14 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}").Uri;
       using var response = this.PerformRequest(uri);
       Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
-      var stream = response.GetResponseStream();
+      using var stream = response.GetResponseStream();
       if (stream == null)
         throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
       var characterSet = response.CharacterSet;
-      if (characterSet == null || characterSet.Trim().Length == 0)
+      if (string.IsNullOrWhiteSpace(characterSet))
         characterSet = "utf-8";
       var enc = Encoding.GetEncoding(characterSet);
-      using var sr = new StreamReader(stream, enc);
+      using var sr = new StreamReader(stream, enc, false, 1024, true);
       var json = sr.ReadToEnd();
       Debug.Print($"[{DateTime.UtcNow}] => JSON: {json}");
       return JsonSerializer.Deserialize<Release>(json, SerializerOptions);
@@ -417,20 +417,18 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       if (stream == null)
         throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
       var characterSet = response.CharacterSet;
-      if (characterSet == null || characterSet.Trim().Length == 0)
+      if (string.IsNullOrWhiteSpace(characterSet))
         characterSet = "utf-8";
-#if NETSTD_GE_2_1 || NETCORE_GE_3_0
+#if !DEBUG && (NETSTD_GE_2_1 || NETCORE_GE_3_0)
       // FIXME: Because this uses the stream directly, we can't show the JSON in debug builds.
       if (characterSet == "utf-8") // Directly use the stream
         return await JsonSerializer.DeserializeAsync<Release>(stream, SerializerOptions);
 #endif
-      { // Map to a string first
-        var enc = Encoding.GetEncoding(characterSet);
-        using var sr = new StreamReader(stream, enc);
-        var json = await sr.ReadToEndAsync().ConfigureAwait(false);
-        Debug.Print($"[{DateTime.UtcNow}] => JSON: {json}");
-        return JsonSerializer.Deserialize<Release>(json, SerializerOptions);
-      }
+      var enc = Encoding.GetEncoding(characterSet);
+      using var sr = new StreamReader(stream, enc, false, 1024, true);
+      var json = await sr.ReadToEndAsync().ConfigureAwait(false);
+      Debug.Print($"[{DateTime.UtcNow}] => JSON: {json}");
+      return JsonSerializer.Deserialize<Release>(json, SerializerOptions);
     }
 
     #endregion
