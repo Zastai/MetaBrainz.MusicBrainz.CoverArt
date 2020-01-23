@@ -19,7 +19,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
     }
 
     public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options) {
-      throw new NotImplementedException("CoverArt Archive IDs are supported for deserialization only.");
+      writer.WriteStringValue(value);
     }
 
   }
