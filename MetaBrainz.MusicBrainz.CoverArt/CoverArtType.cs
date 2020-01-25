@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Flag enumeration of the supported image types.</summary>
-  [SuppressMessage("ReSharper", "UnusedMember.Global")]
   [Flags]
+  [PublicAPI]
   public enum CoverArtType : long {
 
     /// <summary>No cover art type has been set.</summary>

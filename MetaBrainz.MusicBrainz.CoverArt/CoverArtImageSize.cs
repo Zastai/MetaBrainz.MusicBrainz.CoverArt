@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>Enumeration indicating the desired size of an image to be fetched from the CoverArt Archive.</summary>
-  [SuppressMessage("ReSharper", "UnusedMember.Global")]
+  [PublicAPI]
   public enum CoverArtImageSize {
 
     /// <summary>The original image as uploaded. This can be of any size or media type.</summary>

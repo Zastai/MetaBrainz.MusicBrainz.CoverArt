@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
 
   /// <summary>The raw bytes and accompanying content type for an image downloaded from the CoverArt Archive.</summary>
-  [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-  [SuppressMessage("ReSharper", "NotAccessedField.Global")]
-  [SuppressMessage("ReSharper", "UnusedMember.Global")]
+  [PublicAPI]
   public sealed class CoverArtImage : IDisposable {
 
     internal CoverArtImage(string id, CoverArtImageSize size, string type, Stream data) {
