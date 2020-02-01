@@ -5,7 +5,7 @@ using MetaBrainz.MusicBrainz.CoverArt.Interfaces;
 
 namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
 
-  [UsedImplicitly]
+  [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
   internal abstract class CoverArtEntity : ICoverArtEntity {
 
     public IReadOnlyDictionary<string, object?>? UnhandledProperties
@@ -14,7 +14,6 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
     private Dictionary<string, object?>? _unhandled;
 
     [JsonExtensionData]
-    [UsedImplicitly]
     public Dictionary<string, object?>? TheUnhandledProperties { get; set; }
 
   }

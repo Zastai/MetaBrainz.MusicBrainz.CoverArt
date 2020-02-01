@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
@@ -7,45 +7,36 @@ using MetaBrainz.MusicBrainz.CoverArt.Interfaces;
 
 namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
 
-  [UsedImplicitly]
+  [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
   internal sealed class Image : CoverArtEntity, IImage {
 
     [JsonPropertyName("approved")]
-    [UsedImplicitly]
     public bool Approved { get; set; }
 
     [JsonPropertyName("back")]
-    [UsedImplicitly]
     public bool Back { get; set; }
 
     [JsonPropertyName("comment")]
-    [UsedImplicitly]
     public string? Comment { get; set; }
 
     [JsonPropertyName("edit")]
-    [UsedImplicitly]
     public int Edit { get; set; }
 
     [JsonPropertyName("front")]
-    [UsedImplicitly]
     public bool Front { get; set; }
 
     [JsonPropertyName("id"), JsonConverter(typeof(CovertArtArchiveIdConverter))]
-    [UsedImplicitly]
     public string? Id { get; set; }
 
     [JsonPropertyName("image")]
-    [UsedImplicitly]
     public Uri? Location { get; set; }
 
     public IThumbnails? Thumbnails => this.TheThumbnails;
 
     [JsonPropertyName("thumbnails")]
-    [UsedImplicitly]
     public Thumbnails? TheThumbnails { get; set; }
 
     [JsonPropertyName("types")]
-    [UsedImplicitly]
     public IReadOnlyList<string>? TypeStrings { get; set; }
 
     public CoverArtType Types {
