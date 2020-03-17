@@ -31,10 +31,9 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
     [JsonPropertyName("image")]
     public Uri? Location { get; set; }
 
-    public IThumbnails? Thumbnails => this.TheThumbnails;
-
+    [JsonConverter(typeof(JsonInterfaceConverter<IThumbnails, Thumbnails>))]
     [JsonPropertyName("thumbnails")]
-    public Thumbnails? TheThumbnails { get; set; }
+    public IThumbnails? Thumbnails { get; set; }
 
     [JsonPropertyName("types")]
     public IReadOnlyList<string>? TypeStrings { get; set; }
