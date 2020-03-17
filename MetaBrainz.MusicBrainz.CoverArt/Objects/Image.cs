@@ -25,13 +25,13 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
     [JsonPropertyName("front")]
     public bool Front { get; set; }
 
-    [JsonPropertyName("id"), JsonConverter(typeof(CovertArtArchiveIdConverter))]
+    [JsonConverter(typeof(CovertArtArchiveIdConverter))]
+    [JsonPropertyName("id")]
     public string? Id { get; set; }
 
     [JsonPropertyName("image")]
     public Uri? Location { get; set; }
 
-    [JsonConverter(typeof(JsonInterfaceConverter<IThumbnails, Thumbnails>))]
     [JsonPropertyName("thumbnails")]
     public IThumbnails? Thumbnails { get; set; }
 

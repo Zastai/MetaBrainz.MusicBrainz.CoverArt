@@ -10,7 +10,6 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
   [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
   internal sealed class Release : CoverArtEntity, IRelease {
 
-    [JsonConverter(typeof(JsonInterfaceListConverter<IImage, Image>))]
     [JsonPropertyName("images")]
     public IReadOnlyList<IImage>? Images { get; set; }
 

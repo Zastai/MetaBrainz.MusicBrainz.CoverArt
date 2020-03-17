@@ -8,13 +8,10 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
   [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
   internal abstract class CoverArtEntity : ICoverArtEntity {
 
-    public IReadOnlyDictionary<string, object?>? UnhandledProperties
-      => this._unhandled ??= JsonUtils.Unwrap(this.TheUnhandledProperties);
-
-    private Dictionary<string, object?>? _unhandled;
+    IReadOnlyDictionary<string, object?>? ICoverArtEntity.UnhandledProperties => this.UnhandledProperties;
 
     [JsonExtensionData]
-    public Dictionary<string, object?>? TheUnhandledProperties { get; set; }
+    public Dictionary<string, object?>? UnhandledProperties { get; set; }
 
   }
 

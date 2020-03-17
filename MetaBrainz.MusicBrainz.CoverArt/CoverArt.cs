@@ -351,6 +351,21 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     #region Internals
 
+    private static readonly JsonSerializerOptions Options = new JsonSerializerOptions {
+      // @formatter:off
+      AllowTrailingCommas         = false,
+      IgnoreNullValues            = false,
+      IgnoreReadOnlyProperties    = true,
+      PropertyNameCaseInsensitive = false,
+      WriteIndented               = true,
+      // @formatter:on
+      Converters = {
+        new JsonInterfaceConverter<IThumbnails, Thumbnails>(),
+        new JsonInterfaceListConverter<IImage, Image>(),
+        new JsonAnythingConverter(),
+      }
+    };
+
     private readonly string _fullUserAgent;
 
     private HttpWebResponse PerformRequest(Uri uri) {
@@ -440,7 +455,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       using var sr = new StreamReader(stream, enc, false, 1024, true);
       var json = sr.ReadToEnd();
       Debug.Print($"[{DateTime.UtcNow}] => JSON: {JsonUtils.Prettify(json)}");
-      return JsonUtils.Deserialize<Release>(json);
+      return JsonUtils.Deserialize<Release>(json, CoverArt.Options);
     }
 
     private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid) {
@@ -462,7 +477,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       using var sr = new StreamReader(stream, enc, false, 1024, true);
       var json = await sr.ReadToEndAsync().ConfigureAwait(false);
       Debug.Print($"[{DateTime.UtcNow}] => JSON: {JsonUtils.Prettify(json)}");
-      return JsonUtils.Deserialize<Release>(json);
+      return JsonUtils.Deserialize<Release>(json, CoverArt.Options);
     }
 
     #endregion
