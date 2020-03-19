@@ -7,7 +7,9 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+
 using JetBrains.Annotations;
+
 using MetaBrainz.MusicBrainz.CoverArt.Interfaces;
 using MetaBrainz.MusicBrainz.CoverArt.Objects;
 

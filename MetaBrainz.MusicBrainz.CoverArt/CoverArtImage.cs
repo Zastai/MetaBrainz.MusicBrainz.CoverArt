@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
+
 using JetBrains.Annotations;
 
 namespace MetaBrainz.MusicBrainz.CoverArt {
@@ -33,8 +35,8 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     /// <exception cref="ArgumentException">
     /// When the image data is not valid (or not supported by the <see cref="System.Drawing.Image"/> class).
     /// </exception>
-    public System.Drawing.Image Decode(bool useEmbeddedColorManagement = false, bool validateImageData = false) {
-      return System.Drawing.Image.FromStream(this.Data, useEmbeddedColorManagement, validateImageData);
+    public Image Decode(bool useEmbeddedColorManagement = false, bool validateImageData = false) {
+      return Image.FromStream(this.Data, useEmbeddedColorManagement, validateImageData);
     }
 
     #region IDisposable
