@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 using JetBrains.Annotations;
 
+using MetaBrainz.Common.Json;
+using MetaBrainz.Common.Json.Converters;
 using MetaBrainz.MusicBrainz.CoverArt.Interfaces;
 using MetaBrainz.MusicBrainz.CoverArt.Objects;
 
@@ -362,9 +364,9 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       WriteIndented               = true,
       // @formatter:on
       Converters = {
-        new JsonInterfaceConverter<IThumbnails, Thumbnails>(),
-        new JsonInterfaceListConverter<IImage, Image>(),
-        new JsonAnythingConverter(),
+        new InterfaceConverter<IThumbnails, Thumbnails>(),
+        new ReadOnlyListOfInterfaceConverter<IImage, Image>(),
+        new AnyObjectConverter(),
       }
     };
 

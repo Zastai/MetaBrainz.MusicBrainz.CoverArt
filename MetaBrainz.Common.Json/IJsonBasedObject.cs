@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 using JetBrains.Annotations;
 
-namespace MetaBrainz.MusicBrainz.CoverArt.Interfaces {
+namespace MetaBrainz.Common.Json {
 
-  /// <summary>Data from the CoverArt Archive.</summary>
+  /// <summary>An object based on a JSON string (as returned by web services).</summary>
   [PublicAPI]
-  public interface ICoverArtEntity {
+  public interface IJsonBasedObject {
 
     /// <summary>
     /// A dictionary containing all properties not handled by this library.<br/>

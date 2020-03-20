@@ -3,11 +3,13 @@ using System.Collections.Generic;
 
 using JetBrains.Annotations;
 
+using MetaBrainz.Common.Json;
+
 namespace MetaBrainz.MusicBrainz.CoverArt.Interfaces {
 
   /// <summary>An image from the CoverArt Archive.</summary>
   [PublicAPI]
-  public interface IImage : ICoverArtEntity {
+  public interface IImage : IJsonBasedObject {
 
     /// <summary>Flag indicating whether or not the image is approved.</summary>
     bool Approved { get; }

@@ -2,11 +2,13 @@ using System;
 
 using JetBrains.Annotations;
 
+using MetaBrainz.Common.Json;
+
 namespace MetaBrainz.MusicBrainz.CoverArt.Interfaces {
 
   /// <summary>The thumbnails images available for an image on the CovertArt Archive.</summary>
   [PublicAPI]
-  public interface IThumbnails : ICoverArtEntity {
+  public interface IThumbnails : IJsonBasedObject {
 
     /// <summary>The URI for the small thumbnail of the image, if available.</summary>
     Uri? Small { get; }

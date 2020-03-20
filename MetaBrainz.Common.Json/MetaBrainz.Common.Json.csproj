@@ -2,10 +2,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Title>CoverArt Archive Web Service Client Library</Title>
-    <Description>This package provides classes for accessing the CoverArt Archive (CAA), enabling the retrieval of cover art for music releases based on their MusicBrainz ID.</Description>
-    <PackageTags>MusicBrainz album cover art archive CAA libcoverart</PackageTags>
-    <Version>2.0-pre</Version>
+    <Title>Common JSON Utilities</Title>
+    <Description>This package provides JSON-related utility classes used by other MetaBrainz packages.</Description>
+    <PackageTags>MetaBrainz JSON</PackageTags>
+    <Version>1.0-pre</Version>
     <PackageReleaseNotes />
   </PropertyGroup>
 
@@ -18,9 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MetaBrainz.Common.Json\MetaBrainz.Common.Json.csproj" />
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" IncludeAssets="compile" PrivateAssets="all" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.Text.Json" Version="4.7.0" />
   </ItemGroup>
 

@@ -5,12 +5,13 @@ using System.Text.Json.Serialization;
 
 using JetBrains.Annotations;
 
+using MetaBrainz.Common.Json;
 using MetaBrainz.MusicBrainz.CoverArt.Interfaces;
 
 namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
 
   [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-  internal sealed class Image : CoverArtEntity, IImage {
+  internal sealed class Image : JsonBasedObject, IImage {
 
     [JsonPropertyName("approved")]
     public bool Approved { get; set; }

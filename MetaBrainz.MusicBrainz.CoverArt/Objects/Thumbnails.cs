@@ -3,12 +3,13 @@ using System.Text.Json.Serialization;
 
 using JetBrains.Annotations;
 
+using MetaBrainz.Common.Json;
 using MetaBrainz.MusicBrainz.CoverArt.Interfaces;
 
 namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
 
   [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-  internal sealed class Thumbnails : CoverArtEntity, IThumbnails {
+  internal sealed class Thumbnails : JsonBasedObject, IThumbnails {
 
     [JsonPropertyName("small")]
     public Uri? Small { get; set; }

@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
+namespace MetaBrainz.Common.Json.Converters {
 
-  // TODO: Move this to a shared MetaBrainz.Common library.
-  internal sealed class JsonAnythingConverter : JsonConverter<object?> {
+  /// <summary>
+  /// Converter that handles fields of type <see cref="object"/> using the most appropriate framework type.
+  /// Only JSON object values will use <see cref="JsonElement"/> as a fallback.
+  /// </summary>
+  public sealed class AnyObjectConverter : JsonConverter<object?> {
 
+    /// <inheritdoc />
     public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
       switch (reader.TokenType) {
         // Easy cases
@@ -25,6 +30,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
             return decVal;
           if (reader.TryGetDouble(out var floatVal))
             return floatVal;
+          // TODO: Maybe try more things, like BigInteger, based on the text value.
           return reader.GetRawStringValue();
         }
         case JsonTokenType.String: {
@@ -91,6 +97,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Objects {
       }
     }
 
+    /// <inheritdoc />
     public override void Write(Utf8JsonWriter writer, object? value, JsonSerializerOptions options) {
       throw new JsonException("Serialization not implemented.");
     }
