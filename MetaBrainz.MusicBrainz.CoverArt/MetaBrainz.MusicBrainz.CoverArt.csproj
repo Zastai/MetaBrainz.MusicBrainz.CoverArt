@@ -5,8 +5,7 @@
     <Title>CoverArt Archive Web Service Client Library</Title>
     <Description>This package provides classes for accessing the CoverArt Archive (CAA), enabling the retrieval of cover art for music releases based on their MusicBrainz ID.</Description>
     <PackageTags>MusicBrainz album cover art archive CAA libcoverart</PackageTags>
-    <Version>2.0</Version>
-    <PackageReleaseNotes />
+    <Version>2.0.1-pre</Version>
   </PropertyGroup>
 
   <PropertyGroup>
