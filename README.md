@@ -1,4 +1,4 @@
-# MetaBrainz.MusicBrainz.CoverArt [![Build Status](https://ci.appveyor.com/api/projects/status/lid3hosa0cum9xob?svg=true)](https://ci.appveyor.com/project/Zastai/metabrainz-musicbrainz-coverart) [![NuGet Version](https://badge.fury.io/nu/MetaBrainz.MusicBrainz.CoverArt.svg)](https://badge.fury.io/nu/MetaBrainz.MusicBrainz.CoverArt)
+# MetaBrainz.MusicBrainz.CoverArt [![Build Status](https://img.shields.io/appveyor/build/zastai/metabrainz-musicbrainz-coverart)](https://ci.appveyor.com/project/Zastai/metabrainz-musicbrainz-coverart) [![NuGet Version](https://img.shields.io/nuget/v/MetaBrainz.MusicBrainz.CoverArt)](https://www.nuget.org/packages/MetaBrainz.MusicBrainz.CoverArt)
 
 This is a .NET implementation of the libcoverart library (wrapping the [CoverArtArchive API](https://musicbrainz.org/doc/Cover_Art_Archive/API)).
 An attempt has been made to keep the same basic class hierarchy.
