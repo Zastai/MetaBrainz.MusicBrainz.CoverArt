@@ -5,6 +5,20 @@ An attempt has been made to keep the same basic class hierarchy.
 
 ## Release Notes
 
+### v2.0.1 (2020-04-17)
+
+#### Other Changes
+
+- Fixed a build issue causing the XML documentation to be missing from the NuGet package.
+- Minor corrections to this README.
+
+#### Dependency Updates:
+
+- JetBrainz.Annotations → 2020.1.0
+- MetaBrainz.Common.Json → 1.1.1
+- System.Text.Json → 4.7.1
+
+
 ### v2.0 (2020-03-21)
 
 - Target .NET Standard 2.0 and 2.1, .NET Core 2.1 and 3.1 (the current LTS releases) and .NET Framework 4.6.1, 4.7.2 and 4.8.
