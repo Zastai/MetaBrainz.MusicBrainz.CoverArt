@@ -366,7 +366,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       Converters = {
         new InterfaceConverter<IThumbnails, Thumbnails>(),
         new ReadOnlyListOfInterfaceConverter<IImage, Image>(),
-        new AnyObjectConverter(),
+        new AnyObjectReader(),
       }
     };
 
