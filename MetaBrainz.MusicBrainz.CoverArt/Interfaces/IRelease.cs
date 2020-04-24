@@ -12,10 +12,10 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Interfaces {
   public interface IRelease : IJsonBasedObject {
 
     /// <summary>The images available for the release.</summary>
-    IReadOnlyList<IImage>? Images { get; }
+    IReadOnlyList<IImage> Images { get; }
 
     /// <summary>The URL on the MusicBrainz website where more information about the release can be found.</summary>
-    Uri? Location { get; }
+    Uri Location { get; }
 
   }
 

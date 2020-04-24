@@ -11,9 +11,11 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Interfaces {
   public interface IThumbnails : IJsonBasedObject {
 
     /// <summary>The URI for the small thumbnail of the image, if available.</summary>
+    /// <remarks>This field is deprecated and is equivalent to <see cref="Size250"/>.</remarks>
     Uri? Small { get; }
 
     /// <summary>The URI for the large thumbnail of the image, if available.</summary>
+    /// <remarks>This field is deprecated and is equivalent to <see cref="Size500"/>.</remarks>
     Uri? Large { get; }
 
     /// <summary>The URI for the 250-pixel thumbnail of the image, if available.</summary>
