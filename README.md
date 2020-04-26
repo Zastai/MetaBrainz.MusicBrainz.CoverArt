@@ -5,6 +5,35 @@ An attempt has been made to keep the same basic class hierarchy.
 
 ## Release Notes
 
+### v3.0.0 (2020-04-26)
+
+This release replaces the entire JSON backend, using custom serializers.
+
+#### API Additions
+
+- Enum Constant: `CoverArtType.Unknown`
+- Property: `IImage.UnknownTypes`
+  - if `Types` includes `CoverArtType.Unknown`, this will contain the unknown type(s)
+
+#### API Removals
+
+- `IImage.TypeStrings` (replaced by `UnknownTypes`)
+  - *this is a breaking change*
+
+#### API Changes
+
+- `IImage`:
+  - the `Id` and `Thumbnails` properties are no longer nullable
+- `IRelease`:
+  - the `Images` and `Location` properties are no longer nullable
+
+#### Other Changes
+
+#### Dependency Updates:
+
+- MetaBrainz.Common.Json → 3.0.0
+
+
 ### v2.0.1 (2020-04-17)
 
 #### Other Changes
