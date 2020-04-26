@@ -27,8 +27,6 @@ This release replaces the entire JSON backend, using custom serializers.
 - `IRelease`:
   - the `Images` and `Location` properties are no longer nullable
 
-#### Other Changes
-
 #### Dependency Updates:
 
 - MetaBrainz.Common.Json → 3.0.0
