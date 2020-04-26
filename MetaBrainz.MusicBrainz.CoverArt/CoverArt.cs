@@ -155,7 +155,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
     /// </li></ul>
     /// </exception>
-    public ValueTask<CoverArtImage> FetchBackAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
+    public Task<CoverArtImage> FetchBackAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
       => this.FetchImageAsync("release", mbid, "back", size);
 
     /// <summary>Fetch the main "front" image for the specified release, in the specified size.</summary>
@@ -195,7 +195,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
     /// </li></ul>
     /// </exception>
-    public ValueTask<CoverArtImage> FetchFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
+    public Task<CoverArtImage> FetchFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
       => this.FetchImageAsync("release", mbid, "front", size);
 
     /// <summary>Fetch the main "front" image for the specified release group, in the specified size.</summary>
@@ -235,7 +235,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
     /// </li></ul>
     /// </exception>
-    public ValueTask<CoverArtImage> FetchGroupFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
+    public Task<CoverArtImage> FetchGroupFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
       => this.FetchImageAsync("release-group", mbid, "front", size);
 
     /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release group (if any).</summary>
@@ -271,7 +271,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
     /// </li></ul>
     /// </exception>
-    public ValueTask<IRelease> FetchGroupReleaseAsync(Guid mbid) => this.FetchReleaseAsync("release-group", mbid);
+    public Task<IRelease> FetchGroupReleaseAsync(Guid mbid) => this.FetchReleaseAsync("release-group", mbid);
 
     /// <summary>Fetch the specified image for the specified release, in the specified size.</summary>
     /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -316,7 +316,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
     /// </li></ul>
     /// </exception>
-    public ValueTask<CoverArtImage> FetchImageAsync(Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original)
+    public Task<CoverArtImage> FetchImageAsync(Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original)
       => this.FetchImageAsync("release", mbid, id, size);
 
     /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release (if any).</summary>
@@ -350,7 +350,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
     ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
     /// </li></ul>
     /// </exception>
-    public ValueTask<IRelease> FetchReleaseAsync(Guid mbid) => this.FetchReleaseAsync("release", mbid);
+    public Task<IRelease> FetchReleaseAsync(Guid mbid) => this.FetchReleaseAsync("release", mbid);
 
     #endregion
 
@@ -371,7 +371,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       throw new InvalidOperationException("Only HTTP-compatible URL schemes are supported.");
     }
 
-    private async ValueTask<HttpWebResponse> PerformRequestAsync(Uri uri) {
+    private async Task<HttpWebResponse> PerformRequestAsync(Uri uri) {
       Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {uri}");
       if (WebRequest.Create(uri) is HttpWebRequest req) {
         req.Accept = "application/json";
@@ -405,7 +405,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       return new CoverArtImage(id, size, response.ContentType, data);
     }
 
-    private async ValueTask<CoverArtImage> FetchImageAsync(string entity, Guid mbid, string id, CoverArtImageSize size) {
+    private async Task<CoverArtImage> FetchImageAsync(string entity, Guid mbid, string id, CoverArtImageSize size) {
       var suffix = string.Empty;
       if (size != CoverArtImageSize.Original)
         suffix = "-" + ((int) size).ToString(CultureInfo.InvariantCulture);
@@ -450,7 +450,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       return JsonUtils.Deserialize<Release>(json, CoverArt.JsonReaderOptions);
     }
 
-    private async ValueTask<IRelease> FetchReleaseAsync(string entity, Guid mbid) {
+    private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid) {
       var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}").Uri;
       using var response = await this.PerformRequestAsync(uri).ConfigureAwait(false);
       Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
