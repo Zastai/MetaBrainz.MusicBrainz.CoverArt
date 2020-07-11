@@ -412,9 +412,9 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}/{id}{suffix}").Uri;
       using var response = await this.PerformRequestAsync(uri).ConfigureAwait(false);
       Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
-      if (response.ContentLength > MaxImageSize)
-        throw new ArgumentException($"The requested image is too large ({response.ContentLength} > {MaxImageSize}).");
-#if NETSTD_GE_2_1 || NETCORE_GE_3_0
+      if (response.ContentLength > CoverArt.MaxImageSize)
+        throw new ArgumentException($"The requested image is too large ({response.ContentLength} > {CoverArt.MaxImageSize}).");
+#if NETSTANDARD2_1 || NETCOREAPP3_1
       var stream = response.GetResponseStream();
       await using var _ = stream.ConfigureAwait(false);
 #else
@@ -454,7 +454,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}").Uri;
       using var response = await this.PerformRequestAsync(uri).ConfigureAwait(false);
       Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
-#if NETSTD_GE_2_1 || NETCORE_GE_3_0
+#if NETSTANDARD2_1 || NETCOREAPP3_1
       var stream = response.GetResponseStream();
       await using var _ = stream.ConfigureAwait(false);
 #else
