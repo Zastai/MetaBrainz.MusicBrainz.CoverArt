@@ -27,7 +27,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Json.Readers {
       List<string>? unknownTypes = null;
       Dictionary<string, object?>? rest = null;
       while (reader.TokenType == JsonTokenType.PropertyName) {
-        var prop = reader.GetString();
+        var prop = reader.GetPropertyName();
         try {
           reader.Read();
           switch (prop) {

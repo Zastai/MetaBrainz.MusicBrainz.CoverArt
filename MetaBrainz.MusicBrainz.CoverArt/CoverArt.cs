@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -414,11 +414,11 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
       if (response.ContentLength > CoverArt.MaxImageSize)
         throw new ArgumentException($"The requested image is too large ({response.ContentLength} > {CoverArt.MaxImageSize}).");
-#if NETSTANDARD2_1 || NETCOREAPP3_1
+#if NETFRAMEWORK || NETCOREAPP2_1
+      using var stream = response.GetResponseStream();
+#else
       var stream = response.GetResponseStream();
       await using var _ = stream.ConfigureAwait(false);
-#else
-      using var stream = response.GetResponseStream();
 #endif
       if (stream == null)
         throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
@@ -447,18 +447,19 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       using var sr = new StreamReader(stream, enc, false, 1024, true);
       var json = sr.ReadToEnd();
       Debug.Print($"[{DateTime.UtcNow}] => JSON: {JsonUtils.Prettify(json)}");
-      return JsonUtils.Deserialize<Release>(json, CoverArt.JsonReaderOptions);
+      var release = JsonUtils.Deserialize<Release>(json, CoverArt.JsonReaderOptions);
+      return release ?? throw new JsonException("Received a null release.");
     }
 
     private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid) {
       var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}").Uri;
       using var response = await this.PerformRequestAsync(uri).ConfigureAwait(false);
       Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
-#if NETSTANDARD2_1 || NETCOREAPP3_1
+#if NETFRAMEWORK || NETCOREAPP2_1
+      using var stream = response.GetResponseStream();
+#else
       var stream = response.GetResponseStream();
       await using var _ = stream.ConfigureAwait(false);
-#else
-      using var stream = response.GetResponseStream();
 #endif
       if (stream == null)
         throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
@@ -473,7 +474,8 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       using var sr = new StreamReader(stream, enc, false, 1024, true);
       var json = await sr.ReadToEndAsync().ConfigureAwait(false);
       Debug.Print($"[{DateTime.UtcNow}] => JSON: {JsonUtils.Prettify(json)}");
-      return JsonUtils.Deserialize<Release>(json, CoverArt.JsonReaderOptions);
+      var release = JsonUtils.Deserialize<Release>(json, CoverArt.JsonReaderOptions);
+      return release ?? throw new JsonException("Received a null release.");
     }
 
     #endregion
