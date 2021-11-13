@@ -414,11 +414,11 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
       if (response.ContentLength > CoverArt.MaxImageSize)
         throw new ArgumentException($"The requested image is too large ({response.ContentLength} > {CoverArt.MaxImageSize}).");
-#if NETFRAMEWORK || NETCOREAPP2_1
-      using var stream = response.GetResponseStream();
-#else
+#if NET || NETCOREAPP2_1_OR_GREATER
       var stream = response.GetResponseStream();
       await using var _ = stream.ConfigureAwait(false);
+#else
+      using var stream = response.GetResponseStream();
 #endif
       if (stream == null)
         throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
@@ -455,11 +455,11 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
       var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}").Uri;
       using var response = await this.PerformRequestAsync(uri).ConfigureAwait(false);
       Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
-#if NETFRAMEWORK || NETCOREAPP2_1
-      using var stream = response.GetResponseStream();
-#else
+#if NET || NETCOREAPP2_1_OR_GREATER
       var stream = response.GetResponseStream();
       await using var _ = stream.ConfigureAwait(false);
+#else
+      using var stream = response.GetResponseStream();
 #endif
       if (stream == null)
         throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
