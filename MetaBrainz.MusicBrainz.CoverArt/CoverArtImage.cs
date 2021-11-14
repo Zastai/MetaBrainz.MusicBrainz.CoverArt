@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Runtime.Versioning;
 
 using JetBrains.Annotations;
 
@@ -35,6 +36,10 @@ public sealed class CoverArtImage : IDisposable {
   /// <exception cref="ArgumentException">
   /// When the image data is not valid (or not supported by the <see cref="System.Drawing.Image"/> class).
   /// </exception>
+  /// <remarks>This method only </remarks>
+#if NET
+  [SupportedOSPlatform("windows")]
+#endif
   public Image Decode(bool useEmbeddedColorManagement = false, bool validateImageData = false)
     => Image.FromStream(this.Data, useEmbeddedColorManagement, validateImageData);
 
