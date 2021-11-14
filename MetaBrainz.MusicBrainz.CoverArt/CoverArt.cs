@@ -356,6 +356,9 @@ namespace MetaBrainz.MusicBrainz.CoverArt {
 
     #region Internals
 
+    // TODO: Rewrite to use HttpClient
+    #pragma warning disable SYSLIB0014
+
     private static readonly JsonSerializerOptions JsonReaderOptions = JsonUtils.CreateReaderOptions(Converters.Readers);
 
     private readonly string _fullUserAgent;
