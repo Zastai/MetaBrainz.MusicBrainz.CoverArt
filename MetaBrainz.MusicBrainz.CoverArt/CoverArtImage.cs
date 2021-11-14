@@ -10,7 +10,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt;
 [PublicAPI]
 public sealed class CoverArtImage : IDisposable {
 
-  internal CoverArtImage(string id, CoverArtImageSize size, string type, Stream data) {
+  internal CoverArtImage(string id, CoverArtImageSize size, string? type, Stream data) {
     this.Id = id;
     this.Size = size;
     this.ContentType = type;
@@ -23,8 +23,8 @@ public sealed class CoverArtImage : IDisposable {
   /// <summary>The image's size.</summary>
   public readonly CoverArtImageSize Size;
 
-  /// <summary>The content type for the image.</summary>
-  public readonly string ContentType;
+  /// <summary>The content type for the image, if known.</summary>
+  public readonly string? ContentType;
 
   /// <summary>The image's raw data.</summary>
   public readonly Stream Data;
