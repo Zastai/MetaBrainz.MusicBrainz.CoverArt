@@ -3,16 +3,14 @@ using System.Text.Json.Serialization;
 
 using MetaBrainz.MusicBrainz.CoverArt.Json.Readers;
 
-namespace MetaBrainz.MusicBrainz.CoverArt.Json {
+namespace MetaBrainz.MusicBrainz.CoverArt.Json;
 
-  internal static class Converters {
+internal static class Converters {
 
-    public static IEnumerable<JsonConverter> Readers {
-      get {
-        yield return ReleaseReader.Instance;
-      }
+  public static IEnumerable<JsonConverter> Readers {
+    get {
+      yield return ReleaseReader.Instance;
     }
-
   }
 
 }
