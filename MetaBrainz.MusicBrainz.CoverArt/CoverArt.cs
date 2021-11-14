@@ -3,9 +3,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Reflection;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 using JetBrains.Annotations;
@@ -19,18 +21,31 @@ namespace MetaBrainz.MusicBrainz.CoverArt;
 
 /// <summary>Class providing access to the CoverArt Archive API.</summary>
 [PublicAPI]
-public class CoverArt {
+public class CoverArt : IDisposable {
 
   #region Static Fields / Properties
+
+  /// <summary>
+  /// The default contact info portion of the user agent to use for requests; used as initial value for <see cref="ContactInfo"/>.
+  /// </summary>
+  public static Uri? DefaultContactInfo { get; set; }
 
   /// <summary>The default port number to use for requests (-1 to not specify any explicit port).</summary>
   public static int DefaultPort { get; set; } = -1;
 
-  /// <summary>The default user agent to use for requests.</summary>
-  public static string DefaultUserAgent { get; set; } = string.Empty;
+  /// <summary>
+  /// The default product info portion of the user agent to use for requests; used as initial value for <see cref="ProductInfo"/>.
+  /// </summary>
+  public static ProductHeaderValue? DefaultProductInfo { get; set; }
 
   /// <summary>The default web site to use for requests.</summary>
-  public static string DefaultWebSite { get; set; } = "coverartarchive.org";
+  public static string DefaultServer{ get; set; } = "coverartarchive.org";
+
+  /// <summary>The default internet access protocol to use for requests.</summary>
+  public static string DefaultUrlScheme { get; set; } = "https";
+
+  /// <summary>The default user agent to use for requests.</summary>
+  public static string DefaultUserAgent { get; set; } = string.Empty;
 
   /// <summary>
   /// The maximum allowed image size; an exception is thrown if a response larger than this is received from the CoverArt Archive.
@@ -44,76 +59,165 @@ public class CoverArt {
   public const int MaxImageSize = 512 * 1024 * 1024;
 
   /// <summary>The URL included in the user agent for requests as part of this library's information.</summary>
-  public const string UserAgentUrl = "https://github.com/Zastai/MusicBrainz";
+  public const string UserAgentUrl = "https://github.com/Zastai/MetaBrainz.MusicBrainz.CoverArt";
 
   #endregion
 
   #region Constructors
 
-  private static string CreateUserAgent(string application, string version, string contact) {
-    if (string.IsNullOrWhiteSpace(application)) {
-      throw new ArgumentException("The application name must not be blank.", nameof(application));
-    }
-    return $"{application.Trim()}/{version.Trim()} ({contact.Trim()})";
-  }
-
-  /// <summary>Creates a new instance of the <see cref="CoverArt"/> class.</summary>
-  /// <param name="userAgent">
-  /// The user agent to use for all requests (should be of the form <c>APPLICATION/VERSION (CONTACT)</c>).
-  /// </param>
-  /// <exception cref="ArgumentException">
-  /// When the user agent (whether from <paramref name="userAgent"/> or <see cref="DefaultUserAgent"/>) is blank.
-  /// </exception>
-  public CoverArt(string? userAgent = null) {
-    // libcoverart replaces all dashes by slashes; but that turns valid user agents like "CERN-LineMode/2.15" into invalid ones
-    // ("CERN/LineMode/2.15")
-    this.UserAgent = userAgent ?? CoverArt.DefaultUserAgent;
-    if (string.IsNullOrWhiteSpace(userAgent)) {
-      throw new ArgumentException("The user agent must not be blank.", nameof(userAgent));
-    }
-    // Simple Defaults
-    this.Port = CoverArt.DefaultPort;
-    this.WebSite = CoverArt.DefaultWebSite;
-    { // Set full user agent, including this library's information
-      var an = Assembly.GetExecutingAssembly().GetName();
-      this._fullUserAgent = $"{this.UserAgent} {an.Name}/{an.Version} ({CoverArt.UserAgentUrl})";
-    }
-  }
-
-  /// <summary>Creates a new instance of the <see cref="CoverArt"/> class.</summary>
-  /// <param name="application">The application name to use in the user agent property for all requests.</param>
-  /// <param name="version">The version number to use in the user agent property for all requests.</param>
-  /// <param name="contact">
-  /// The contact address (typically HTTP or MAILTO) to use in the user agent property for all requests.
-  /// </param>
-  /// <exception cref="ArgumentException">When <paramref name="application"/> is blank.</exception>
-  public CoverArt(string application, Version version, Uri contact)
-  : this(application, version.ToString(), contact.ToString())
+  /// <summary>
+  /// Initializes a new CoverArt Archive API client instance.
+  /// User agent information must have been set up via <see cref="DefaultContactInfo"/> and <see cref="DefaultProductInfo"/>.
+  /// </summary>
+  public CoverArt()
+  : this(CoverArt.GetDefaultProductInfo(), CoverArt.GetDefaultContactInfo())
   { }
 
-  /// <summary>Creates a new instance of the <see cref="CoverArt"/> class.</summary>
-  /// <param name="application">The application name to use in the user agent property for all requests.</param>
-  /// <param name="version">The version number to use in the user agent property for all requests.</param>
+  /// <summary>
+  /// Initializes a new CoverArt Archive API client instance.
+  /// Contact information must have been set up via <see cref="DefaultContactInfo"/>.
+  /// </summary>
+  /// <param name="product">The product info portion of the user agent to use for requests.</param>
+  public CoverArt(ProductHeaderValue product)
+  : this(product, CoverArt.GetDefaultContactInfo())
+  { }
+
+  /// <summary>Initializes a new CoverArt Archive API client instance.</summary>
+  /// <param name="product">The product info portion of the user agent to use for requests.</param>
   /// <param name="contact">
-  /// The contact address (typically a URL or email address) to use in the user agent property for all requests.
+  /// The contact info portion (typically a URL or email address) of the user agent to use for requests.
   /// </param>
-  /// <exception cref="ArgumentException">When <paramref name="application"/> is blank.</exception>
+  public CoverArt(ProductHeaderValue product, Uri contact) {
+    this.ContactInfo = contact;
+    this.ProductInfo = product;
+    this.UserAgentContact = new ProductInfoHeaderValue($"({contact})");
+    this.UserAgentProduct = new ProductInfoHeaderValue(product);
+  }
+
+  /// <summary>Initializes a new CoverArt Archive API client instance.</summary>
+  /// <param name="product">The product info portion of the user agent to use for requests.</param>
+  /// <param name="contact">
+  /// The contact info portion (typically a URL or email address) of the user agent to use for requests. Must be a valid URI.
+  /// </param>
+  public CoverArt(ProductHeaderValue product, string contact)
+  : this(product, new Uri(contact))
+  { }
+
+  /// <summary>
+  /// Initializes a new CoverArt Archive API client instance.
+  /// Product information must have been set up via <see cref="DefaultProductInfo"/>.
+  /// </summary>
+  /// <param name="contact">
+  /// The contact info portion (typically a URL or email address) of the user agent to use for requests.
+  /// </param>
+  public CoverArt(Uri contact)
+  : this(CoverArt.GetDefaultProductInfo (), contact)
+  { }
+
+  /// <summary>
+  /// Initializes a new CoverArt Archive API client instance.
+  /// Product information must have been set up via <see cref="DefaultProductInfo"/>.
+  /// </summary>
+  /// <param name="contact">
+  /// The contact info portion (typically a URL or email address) of the user agent to use for requests. Must be a valid URI.
+  /// </param>
+  public CoverArt(string contact)
+  : this(new Uri(contact))
+  { }
+
+  /// <summary>
+  /// Initializes a new CoverArt Archive API client instance.
+  /// Contact information must have been set up via <see cref="DefaultContactInfo"/>.
+  /// </summary>
+  /// <param name="application">The application name for the product info portion of the user agent to use for requests.</param>
+  /// <param name="version">The version number for the product info portion of the user agent to use for requests.</param>
+  public CoverArt(string application, Version version)
+  : this(application, version.ToString())
+  { }
+
+  /// <summary>
+  /// Initializes a new CoverArt Archive API client instance.
+  /// Contact information must have been set up via <see cref="DefaultContactInfo"/>.
+  /// </summary>
+  /// <param name="application">The application name for the product info portion of the user agent to use for requests.</param>
+  /// <param name="version">The version number for the product info portion of the user agent to use for requests.</param>
+  public CoverArt(string application, string version)
+  : this(new ProductHeaderValue(application, version))
+  { }
+
+  /// <summary>Initializes a new CoverArt Archive API client instance.</summary>
+  /// <param name="application">The application name for the product info portion of the user agent to use for requests.</param>
+  /// <param name="version">The version number for the product info portion of the user agent to use for requests.</param>
+  /// <param name="contact">
+  /// The contact info portion (typically a URL or email address) of the user agent to use for requests.
+  /// </param>
+  public CoverArt(string application, Version version, Uri contact)
+  : this(application, version.ToString(), contact)
+  { }
+
+  /// <summary>Initializes a new CoverArt Archive API client instance.</summary>
+  /// <param name="application">The application name for the product info portion of the user agent to use for requests.</param>
+  /// <param name="version">The version number for the product info portion of the user agent to use for requests.</param>
+  /// <param name="contact">
+  /// The contact info portion (typically a URL or email address) of the user agent to use for requests. Must be a valid URI.
+  /// </param>
+  public CoverArt(string application, Version version, string contact)
+  : this(application, version.ToString(), new Uri(contact))
+  { }
+
+  /// <summary>Initializes a new CoverArt Archive API client instance.</summary>
+  /// <param name="application">The application name for the product info portion of the user agent to use for requests.</param>
+  /// <param name="version">The version number for the product info portion of the user agent to use for requests.</param>
+  /// <param name="contact">
+  /// The contact info portion (typically a URL or email address) of the user agent to use for requests.
+  /// </param>
+  public CoverArt(string application, string version, Uri contact)
+  : this(new ProductHeaderValue(application, version), contact)
+  { }
+
+  /// <summary>Initializes a new CoverArt Archive API client instance.</summary>
+  /// <param name="application">The application name to use in the User-Agent property for all requests.</param>
+  /// <param name="version">The version number to use in the User-Agent property for all requests.</param>
+  /// <param name="contact">
+  /// The contact info portion (typically a URL or email address) of the user agent to use for requests. Must be a valid URI.
+  /// </param>
   public CoverArt(string application, string version, string contact)
-  : this(CoverArt.CreateUserAgent(application, version, contact))
+  : this(application, version, new Uri(contact))
   { }
 
   #endregion
 
   #region Instance Fields / Properties
 
-  /// <summary>The port number to use for requests (-1 to not specify any explicit port).</summary>
-  public int Port { get; set; }
+  /// <summary>The base URI for all requests.</summary>
+  public Uri BaseUri => new UriBuilder(this.UrlScheme, this.Server, this.Port).Uri;
 
-  /// <summary>The user agent to use for all requests.</summary>
-  public string UserAgent { get; }
+  /// <summary>The contact information portion of the user agent to use for requests.</summary>
+  public Uri ContactInfo { get; }
 
-  /// <summary>The web site to use for requests.</summary>
-  public string WebSite { get; set; }
+  /// <summary>
+  /// The port number to use for requests (-1 to not specify any explicit port).<br/>
+  /// Changes to this property only take effect when creating the underlying web service client. If this property is set after
+  /// requests have been issued, <see cref="Close()"/> must be called for the changes to take effect.
+  /// </summary>
+  public int Port { get; set; } = CoverArt.DefaultPort;
+
+  /// <summary>The product information portion of the user agent to use for requests.</summary>
+  public ProductHeaderValue ProductInfo { get; }
+
+  /// <summary>
+  /// The server to use for requests.<br/>
+  /// Changes to this property only take effect when creating the underlying web service client. If this property is set after
+  /// requests have been issued, <see cref="Close()"/> must be called for the changes to take effect.
+  /// </summary>
+  public string Server { get; set; } = CoverArt.DefaultServer;
+
+  /// <summary>
+  /// The internet access protocol to use for requests.<br/>
+  /// Changes to this property only take effect when creating the underlying web service client. If this property is set after
+  /// requests have been issued, <see cref="Close()"/> must be called for the changes to take effect.
+  /// </summary>
+  public string UrlScheme { get; set; } = CoverArt.DefaultUrlScheme;
 
   #endregion
 
@@ -137,7 +241,7 @@ public class CoverArt {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchBack(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => this.FetchImage("release", mbid, "back", size);
+    => CoverArt.ResultOf(this.FetchImageAsync("release", mbid, "back", size));
 
   /// <summary>Fetch the main "back" image for the specified release.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -177,7 +281,7 @@ public class CoverArt {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchFront(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => this.FetchImage("release", mbid, "front", size);
+    => CoverArt.ResultOf(this.FetchImageAsync("release", mbid, "front", size));
 
   /// <summary>Fetch the main "front" image for the specified release, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -217,7 +321,7 @@ public class CoverArt {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchGroupFront(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => this.FetchImage("release-group", mbid, "front", size);
+    => CoverArt.ResultOf(this.FetchImageAsync("release-group", mbid, "front", size));
 
   /// <summary>Fetch the main "front" image for the specified release group, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release group ID for which the image is requested.</param>
@@ -254,7 +358,7 @@ public class CoverArt {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public IRelease FetchGroupRelease(Guid mbid) => this.FetchRelease("release-group", mbid);
+  public IRelease FetchGroupRelease(Guid mbid) => CoverArt.ResultOf(this.FetchReleaseAsync("release-group", mbid));
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release group (if any).</summary>
   /// <param name="mbid">The MusicBrainz release group ID for which cover art information is requested.</param>
@@ -295,7 +399,7 @@ public class CoverArt {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchImage(Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original)
-    => this.FetchImage("release", mbid, id, size);
+    => CoverArt.ResultOf(this.FetchImageAsync("release", mbid, id, size));
 
   /// <summary>Fetch the specified image for the specified release, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -333,7 +437,7 @@ public class CoverArt {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public IRelease FetchRelease(Guid mbid) => this.FetchRelease("release", mbid);
+  public IRelease FetchRelease(Guid mbid) => CoverArt.ResultOf(this.FetchReleaseAsync("release", mbid));
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release (if any).</summary>
   /// <param name="mbid">The MusicBrainz release ID for which cover art information is requested.</param>
@@ -357,59 +461,108 @@ public class CoverArt {
 
   #region Internals
 
-  // TODO: Rewrite to use HttpClient
-  #pragma warning disable SYSLIB0014
+  #region JSON Options
 
   private static readonly JsonSerializerOptions JsonReaderOptions = JsonUtils.CreateReaderOptions(Converters.Readers);
 
-  private readonly string _fullUserAgent;
+  #endregion
+  
+  #region HTTP Client / IDisposable
 
-  private HttpWebResponse PerformRequest(Uri uri) {
-    Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {uri}");
-    if (WebRequest.Create(uri) is HttpWebRequest req) {
-      req.Accept = "application/json";
-      req.Method = "GET";
-      req.UserAgent = this._fullUserAgent;
-      return (HttpWebResponse) req.GetResponse();
+  private readonly SemaphoreSlim ClientLock = new SemaphoreSlim(1);
+
+  private bool Disposed;
+
+  private HttpClient? TheClient;
+
+  private readonly ProductInfoHeaderValue UserAgentContact;
+
+  private readonly ProductInfoHeaderValue UserAgentProduct;
+
+  private HttpClient Client {
+    get {
+      if (this.Disposed) {
+        throw new ObjectDisposedException(nameof(CoverArt));
+      }
+      if (this.TheClient == null) { // Set up the instance with the invariant settings
+        var an = typeof(CoverArt).Assembly.GetName();
+        this.TheClient = new HttpClient {
+          BaseAddress = new UriBuilder("https", this.Server, this.Port).Uri,
+          DefaultRequestHeaders = {
+              Accept = {
+                new MediaTypeWithQualityHeaderValue("application/json")
+              },
+              UserAgent = {
+                this.UserAgentProduct,
+                this.UserAgentContact,
+                new ProductInfoHeaderValue(an.Name ?? "*Unknown Assembly*", an.Version?.ToString()),
+                new ProductInfoHeaderValue($"({CoverArt.UserAgentUrl})"),
+              },
+            }
+        };
+      }
+      return this.TheClient;
     }
-    throw new InvalidOperationException("Only HTTP-compatible URL schemes are supported.");
   }
 
-  private async Task<HttpWebResponse> PerformRequestAsync(Uri uri) {
-    Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {uri}");
-    if (WebRequest.Create(uri) is HttpWebRequest req) {
-      req.Accept = "application/json";
-      req.Method = "GET";
-      req.UserAgent = this._fullUserAgent;
-      return (HttpWebResponse) await req.GetResponseAsync().ConfigureAwait(false);
-    }
-    throw new InvalidOperationException("Only HTTP-compatible URL schemes are supported.");
-  }
-
-  private CoverArtImage FetchImage(string entity, Guid mbid, string id, CoverArtImageSize size) {
-    var suffix = string.Empty;
-    if (size != CoverArtImageSize.Original) {
-      suffix = "-" + ((int) size).ToString(CultureInfo.InvariantCulture);
-    }
-    var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}/{id}{suffix}").Uri;
-    using var response = this.PerformRequest(uri);
-    Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
-    if (response.ContentLength > CoverArt.MaxImageSize) {
-      throw new ArgumentException($"The requested image is too large ({response.ContentLength} > {CoverArt.MaxImageSize}).");
-    }
-    using var stream = response.GetResponseStream();
-    if (stream == null) {
-      throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
-    }
-    var data = new MemoryStream();
+  /// <summary>Closes the underlying web service client in use by this CoverArt Archive client, if there is one.</summary>
+  /// <remarks>The next web service request will create a new client.</remarks>
+  public void Close() {
+    this.ClientLock.Wait();
     try {
-      stream.CopyTo(data);
+      this.TheClient?.Dispose();
+      this.TheClient = null;
     }
-    catch {
-      data.Dispose();
-      throw;
+    finally {
+      this.ClientLock.Release();
     }
-    return new CoverArtImage(id, size, response.ContentType, data);
+  }
+
+  /// <summary>Disposes the web service client in use by this CoverArt Archive client, if there is one.</summary>
+  /// <remarks>Further attempts at web service requests will cause <see cref="ObjectDisposedException"/> to be thrown.</remarks>
+  public void Dispose() {
+    this.Dispose(true);
+    GC.SuppressFinalize(this);
+  }
+
+  private void Dispose(bool disposing) {
+    if (!disposing) {
+      return;
+    }
+    try {
+      this.Close();
+      this.ClientLock.Dispose();
+    }
+    finally {
+      this.Disposed = true;
+    }
+  }
+
+  /// <summary>Finalizes this instance.</summary>
+  ~CoverArt() {
+    this.Dispose(false);
+  }
+
+  #endregion
+
+  #region Basic Request Execution
+
+  private async Task<HttpResponseMessage> PerformRequestAsync(string address) {
+    Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {this.BaseUri}{address}");
+    await this.ClientLock.WaitAsync();
+    try {
+      var client = this.Client;
+      HttpResponseMessage response;
+      var request = new HttpRequestMessage(HttpMethod.Get, address);
+      response = await client.SendAsync(request);
+      Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' (v{response.Version})");
+      Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {CoverArt.FormatMultiLine(response.Headers.ToString())}");
+      Debug.Print($"[{DateTime.UtcNow}] => CONTENT: {response.Content.Headers.ContentType}, {response.Content.Headers.ContentLength ?? 0} byte(s))");
+      return response;
+    }
+    finally {
+      this.ClientLock.Release();
+    }
   }
 
   private async Task<CoverArtImage> FetchImageAsync(string entity, Guid mbid, string id, CoverArtImageSize size) {
@@ -417,16 +570,17 @@ public class CoverArt {
     if (size != CoverArtImageSize.Original) {
       suffix = "-" + ((int) size).ToString(CultureInfo.InvariantCulture);
     }
-    var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}/{id}{suffix}").Uri;
-    using var response = await this.PerformRequestAsync(uri).ConfigureAwait(false);
-    Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
-    if (response.ContentLength > CoverArt.MaxImageSize)
-      throw new ArgumentException($"The requested image is too large ({response.ContentLength} > {CoverArt.MaxImageSize}).");
-#if NET || NETCOREAPP2_1_OR_GREATER
-    var stream = response.GetResponseStream();
+    var address= $"{entity}/{mbid:D}/{id}{suffix}";
+    using var response = await this.PerformRequestAsync(address).ConfigureAwait(false);
+    var contentLength = response.Content.Headers.ContentLength ?? 0;
+    if (contentLength > CoverArt.MaxImageSize) {
+      throw new ArgumentException($"The requested image is too large ({contentLength} > {CoverArt.MaxImageSize}).");
+    }
+#if NET || NETSTANDARD2_1_OR_GREATER
+    var stream = await response.Content.ReadAsStreamAsync();
     await using var _ = stream.ConfigureAwait(false);
 #else
-    using var stream = response.GetResponseStream();
+    using var stream = await response.Content.ReadAsStreamAsync();
 #endif
     if (stream == null) {
       throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
@@ -439,58 +593,74 @@ public class CoverArt {
       data.Dispose();
       throw;
     }
-    return new CoverArtImage(id, size, response.ContentType, data);
-  }
-
-  private IRelease FetchRelease(string entity, Guid mbid) {
-    var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}").Uri;
-    using var response = this.PerformRequest(uri);
-    Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
-    using var stream = response.GetResponseStream();
-    if (stream == null) {
-      throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
-    }
-    var characterSet = response.CharacterSet;
-    if (string.IsNullOrWhiteSpace(characterSet)) {
-      characterSet = "utf-8";
-    }
-    var enc = Encoding.GetEncoding(characterSet);
-    using var sr = new StreamReader(stream, enc, false, 1024, true);
-    var json = sr.ReadToEnd();
-    Debug.Print($"[{DateTime.UtcNow}] => JSON: {JsonUtils.Prettify(json)}");
-    var release = JsonUtils.Deserialize<Release>(json, CoverArt.JsonReaderOptions);
-    return release ?? throw new JsonException("Received a null release.");
+    return new CoverArtImage(id, size, response.Content?.Headers?.ContentType?.MediaType, data);
   }
 
   private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid) {
-    var uri = new UriBuilder("http", this.WebSite, this.Port, $"{entity}/{mbid:D}").Uri;
-    using var response = await this.PerformRequestAsync(uri).ConfigureAwait(false);
-    Debug.Print($"[{DateTime.UtcNow}] => RESPONSE ({response.ContentType}): {response.ContentLength} bytes");
-#if NET || NETCOREAPP2_1_OR_GREATER
-    var stream = response.GetResponseStream();
+    using var response = await this.PerformRequestAsync($"{entity}/{mbid:D}").ConfigureAwait(false);
+#if NET || NETSTANDARD2_1_OR_GREATER
+    var stream = await response.Content.ReadAsStreamAsync();
     await using var _ = stream.ConfigureAwait(false);
 #else
-    using var stream = response.GetResponseStream();
+    using var stream = await response.Content.ReadAsStreamAsync();
 #endif
     if (stream == null) {
       throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
     }
-    var characterSet = response.CharacterSet;
+    var characterSet = response.Content?.Headers?.ContentType?.CharSet;
     if (string.IsNullOrWhiteSpace(characterSet)) {
       characterSet = "utf-8";
     }
+    IRelease? release;
 #if !DEBUG
     if (characterSet == "utf-8") { // Directly use the stream
-      return await JsonUtils.DeserializeAsync<Release>(stream, CoverArt.JsonReaderOptions);
+      release = await JsonUtils.DeserializeAsync<Release>(stream, CoverArt.JsonReaderOptions);
+      return release ?? throw new JsonException("Received a null release.");
     }
 #endif
     var enc = Encoding.GetEncoding(characterSet);
     using var sr = new StreamReader(stream, enc, false, 1024, true);
     var json = await sr.ReadToEndAsync().ConfigureAwait(false);
     Debug.Print($"[{DateTime.UtcNow}] => JSON: {JsonUtils.Prettify(json)}");
-    var release = JsonUtils.Deserialize<Release>(json, CoverArt.JsonReaderOptions);
+    release = JsonUtils.Deserialize<Release>(json, CoverArt.JsonReaderOptions);
     return release ?? throw new JsonException("Received a null release.");
   }
+
+  #endregion
+
+  #region Utility Methods
+
+  private static string FormatMultiLine(string text) {
+    const string prefix = "<<";
+    const string suffix = ">>";
+    const string sep = "\n  ";
+    char[] newlines = { '\r', '\n' };
+    text = text.Replace("\r\n", "\n").TrimEnd(newlines);
+    var lines = text.Split(newlines);
+    if (lines.Length == 0) {
+      return prefix + suffix;
+    }
+    if (lines.Length == 1) {
+      return prefix + lines[0] + suffix;
+    }
+    return prefix + sep + string.Join(sep, lines) + "\n" + suffix;
+  }
+
+  private static Uri GetDefaultContactInfo() {
+    return CoverArt.DefaultContactInfo ??
+      throw new InvalidOperationException($"When not passed to a constructor, contact info needs to be set using {nameof(CoverArt.DefaultContactInfo)}.");
+  }
+
+  private static ProductHeaderValue GetDefaultProductInfo() {
+    return CoverArt.DefaultProductInfo ??
+      throw new InvalidOperationException($"When not passed to a constructor, product info needs to be set using {nameof(CoverArt.DefaultContactInfo)}.");
+  }
+
+  private static void ResultOf(Task task) => task.ConfigureAwait(false).GetAwaiter().GetResult();
+
+  private static T ResultOf<T>(Task<T> task) => task.ConfigureAwait(false).GetAwaiter().GetResult();
+
+  #endregion
 
   #endregion
 
