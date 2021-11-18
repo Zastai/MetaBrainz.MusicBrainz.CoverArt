@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Title>CoverArt Archive Web Service Client Library</Title>
     <Description>This package provides classes for accessing the CoverArt Archive (CAA), enabling the retrieval of cover art for music releases based on their MusicBrainz ID.</Description>
-    <PackageCopyrightYears>2016-2020</PackageCopyrightYears>
+    <PackageCopyrightYears>2016-2021</PackageCopyrightYears>
     <PackageRepositoryName>MetaBrainz.MusicBrainz.CoverArt</PackageRepositoryName>
     <PackageTags>MusicBrainz album cover art archive CAA libcoverart</PackageTags>
-    <Version>4.0.0-pre</Version>
+    <Version>4.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
