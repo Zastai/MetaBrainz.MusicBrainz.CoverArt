@@ -25,7 +25,7 @@ categories:
   - title: 📝 Documentation Updates
     label: documentation
   - title: 👻 Maintenance
-    label: internal
+    label: maintenance
   - title: 🚦 Tests
     label: tests
 
