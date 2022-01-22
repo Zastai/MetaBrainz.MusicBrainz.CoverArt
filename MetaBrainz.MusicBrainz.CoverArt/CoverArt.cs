@@ -541,7 +541,7 @@ public class CoverArt : IDisposable {
     Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {this.BaseUri}{address}");
     var client = this.Client;
     var request = new HttpRequestMessage(HttpMethod.Get, address);
-    var response = await client.SendAsync(request);
+    var response = await client.SendAsync(request).ConfigureAwait(false);
     Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' " +
                 $"(v{response.Version})");
     Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {CoverArt.FormatMultiLine(response.Headers.ToString())}");
@@ -562,10 +562,10 @@ public class CoverArt : IDisposable {
       throw new ArgumentException($"The requested image is too large ({contentLength} > {CoverArt.MaxImageSize}).");
     }
 #if NET || NETSTANDARD2_1_OR_GREATER
-    var stream = await response.Content.ReadAsStreamAsync();
+    var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
     await using var _ = stream.ConfigureAwait(false);
 #else
-    using var stream = await response.Content.ReadAsStreamAsync();
+    using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 #endif
     if (stream == null) {
       throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
@@ -584,10 +584,10 @@ public class CoverArt : IDisposable {
   private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid) {
     using var response = await this.PerformRequestAsync($"{entity}/{mbid:D}").ConfigureAwait(false);
 #if NET || NETSTANDARD2_1_OR_GREATER
-    var stream = await response.Content.ReadAsStreamAsync();
+    var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
     await using var _ = stream.ConfigureAwait(false);
 #else
-    using var stream = await response.Content.ReadAsStreamAsync();
+    using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 #endif
     if (stream == null) {
       throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
@@ -599,7 +599,7 @@ public class CoverArt : IDisposable {
     IRelease? release;
 #if !DEBUG
     if (characterSet == "utf-8") { // Directly use the stream
-      release = await JsonUtils.DeserializeAsync<Release>(stream, CoverArt.JsonReaderOptions);
+      release = await JsonUtils.DeserializeAsync<Release>(stream, CoverArt.JsonReaderOptions).ConfigureAwait(false);
       return release ?? throw new JsonException("Received a null release.");
     }
 #endif
