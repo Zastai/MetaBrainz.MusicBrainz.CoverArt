@@ -466,10 +466,8 @@ public class CoverArt : IDisposable {
   private static readonly JsonSerializerOptions JsonReaderOptions = JsonUtils.CreateReaderOptions(Converters.Readers);
 
   #endregion
-  
-  #region HTTP Client / IDisposable
 
-  private readonly SemaphoreSlim ClientLock = new SemaphoreSlim(1);
+  #region HTTP Client / IDisposable
 
   private bool Disposed;
 
@@ -508,14 +506,7 @@ public class CoverArt : IDisposable {
   /// <summary>Closes the underlying web service client in use by this CoverArt Archive client, if there is one.</summary>
   /// <remarks>The next web service request will create a new client.</remarks>
   public void Close() {
-    this.ClientLock.Wait();
-    try {
-      this.TheClient?.Dispose();
-      this.TheClient = null;
-    }
-    finally {
-      this.ClientLock.Release();
-    }
+    Interlocked.Exchange(ref this.TheClient, null)?.Dispose();
   }
 
   /// <summary>Disposes the web service client in use by this CoverArt Archive client, if there is one.</summary>
@@ -531,7 +522,6 @@ public class CoverArt : IDisposable {
     }
     try {
       this.Close();
-      this.ClientLock.Dispose();
     }
     finally {
       this.Disposed = true;
@@ -549,20 +539,13 @@ public class CoverArt : IDisposable {
 
   private async Task<HttpResponseMessage> PerformRequestAsync(string address) {
     Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {this.BaseUri}{address}");
-    await this.ClientLock.WaitAsync();
-    try {
-      var client = this.Client;
-      HttpResponseMessage response;
-      var request = new HttpRequestMessage(HttpMethod.Get, address);
-      response = await client.SendAsync(request);
-      Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' (v{response.Version})");
-      Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {CoverArt.FormatMultiLine(response.Headers.ToString())}");
-      Debug.Print($"[{DateTime.UtcNow}] => CONTENT: {response.Content.Headers.ContentType}, {response.Content.Headers.ContentLength ?? 0} byte(s))");
-      return response;
-    }
-    finally {
-      this.ClientLock.Release();
-    }
+    var client = this.Client;
+    var request = new HttpRequestMessage(HttpMethod.Get, address);
+    var response = await client.SendAsync(request);
+    Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' (v{response.Version})");
+    Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {CoverArt.FormatMultiLine(response.Headers.ToString())}");
+    Debug.Print($"[{DateTime.UtcNow}] => CONTENT: {response.Content.Headers.ContentType}, {response.Content.Headers.ContentLength ?? 0} byte(s))");
+    return response;
   }
 
   private async Task<CoverArtImage> FetchImageAsync(string entity, Guid mbid, string id, CoverArtImageSize size) {
