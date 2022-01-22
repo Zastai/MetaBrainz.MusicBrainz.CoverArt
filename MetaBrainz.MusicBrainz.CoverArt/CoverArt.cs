@@ -249,6 +249,7 @@ public class CoverArt : IDisposable {
   /// The requested image size; <see cref="CoverArtImageSize.Original"/> can be any content type, but the thumbnails are always
   /// JPEG.
   /// </param>
+  /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
   /// <exception cref="WebException">
   /// When something went wrong with the request.
@@ -260,8 +261,9 @@ public class CoverArt : IDisposable {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public Task<CoverArtImage> FetchBackAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => this.FetchImageAsync("release", mbid, "back", size);
+  public Task<CoverArtImage> FetchBackAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original,
+                                            CancellationToken cancellationToken = new())
+    => this.FetchImageAsync("release", mbid, "back", size, cancellationToken);
 
   /// <summary>Fetch the main "front" image for the specified release, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -289,6 +291,7 @@ public class CoverArt : IDisposable {
   /// The requested image size; <see cref="CoverArtImageSize.Original"/> can be any content type, but the thumbnails are always
   /// JPEG.
   /// </param>
+  /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
   /// <exception cref="WebException">
   /// When something went wrong with the request.
@@ -300,8 +303,9 @@ public class CoverArt : IDisposable {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public Task<CoverArtImage> FetchFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => this.FetchImageAsync("release", mbid, "front", size);
+  public Task<CoverArtImage> FetchFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original,
+                                             CancellationToken cancellationToken = new())
+    => this.FetchImageAsync("release", mbid, "front", size, cancellationToken);
 
   /// <summary>Fetch the main "front" image for the specified release group, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release group ID for which the image is requested.</param>
@@ -329,6 +333,7 @@ public class CoverArt : IDisposable {
   /// The requested image size; <see cref="CoverArtImageSize.Original"/> can be any content type, but the thumbnails are always
   /// JPEG.
   /// </param>
+  /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
   /// <exception cref="WebException">
   /// When something went wrong with the request.
@@ -340,8 +345,9 @@ public class CoverArt : IDisposable {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public Task<CoverArtImage> FetchGroupFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => this.FetchImageAsync("release-group", mbid, "front", size);
+  public Task<CoverArtImage> FetchGroupFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original,
+                                                  CancellationToken cancellationToken = new())
+    => this.FetchImageAsync("release-group", mbid, "front", size, cancellationToken);
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release group (if any).</summary>
   /// <param name="mbid">The MusicBrainz release group ID for which cover art information is requested.</param>
@@ -362,6 +368,7 @@ public class CoverArt : IDisposable {
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release group (if any).</summary>
   /// <param name="mbid">The MusicBrainz release group ID for which cover art information is requested.</param>
+  /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>
   /// An asynchronous operation returning a <see cref="Release"/> object containing information about the cover art for the
   /// release group's main release.
@@ -376,7 +383,8 @@ public class CoverArt : IDisposable {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public Task<IRelease> FetchGroupReleaseAsync(Guid mbid) => this.FetchReleaseAsync("release-group", mbid);
+  public Task<IRelease> FetchGroupReleaseAsync(Guid mbid, CancellationToken cancellationToken = new())
+    => this.FetchReleaseAsync("release-group", mbid, cancellationToken);
 
   /// <summary>Fetch the specified image for the specified release, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -410,6 +418,7 @@ public class CoverArt : IDisposable {
   /// The requested image size; <see cref="CoverArtImageSize.Original"/> can be any content type, but the thumbnails are always
   /// JPEG.
   /// </param>
+  /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
   /// <exception cref="WebException">
   /// When something went wrong with the request.
@@ -421,8 +430,9 @@ public class CoverArt : IDisposable {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public Task<CoverArtImage> FetchImageAsync(Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original)
-    => this.FetchImageAsync("release", mbid, id, size);
+  public Task<CoverArtImage> FetchImageAsync(Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original,
+                                             CancellationToken cancellationToken = new())
+    => this.FetchImageAsync("release", mbid, id, size, cancellationToken);
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release (if any).</summary>
   /// <param name="mbid">The MusicBrainz release ID for which cover art information is requested.</param>
@@ -441,6 +451,7 @@ public class CoverArt : IDisposable {
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release (if any).</summary>
   /// <param name="mbid">The MusicBrainz release ID for which cover art information is requested.</param>
+  /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>
   /// An asynchronous operation returning a <see cref="Release"/> object containing information about the cover art for the
   /// release.
@@ -455,7 +466,8 @@ public class CoverArt : IDisposable {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public Task<IRelease> FetchReleaseAsync(Guid mbid) => this.FetchReleaseAsync("release", mbid);
+  public Task<IRelease> FetchReleaseAsync(Guid mbid, CancellationToken cancellationToken = new())
+    => this.FetchReleaseAsync("release", mbid, cancellationToken);
 
   #endregion
 
@@ -537,11 +549,11 @@ public class CoverArt : IDisposable {
 
   #region Basic Request Execution
 
-  private async Task<HttpResponseMessage> PerformRequestAsync(string address) {
+  private async Task<HttpResponseMessage> PerformRequestAsync(string address, CancellationToken cancellationToken) {
     Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {this.BaseUri}{address}");
     var client = this.Client;
     var request = new HttpRequestMessage(HttpMethod.Get, address);
-    var response = await client.SendAsync(request).ConfigureAwait(false);
+    var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(false);
     Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' " +
                 $"(v{response.Version})");
     Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {CoverArt.FormatMultiLine(response.Headers.ToString())}");
@@ -550,18 +562,22 @@ public class CoverArt : IDisposable {
     return response;
   }
 
-  private async Task<CoverArtImage> FetchImageAsync(string entity, Guid mbid, string id, CoverArtImageSize size) {
+  private async Task<CoverArtImage> FetchImageAsync(string entity, Guid mbid, string id, CoverArtImageSize size,
+                                                    CancellationToken cancellationToken) {
     var suffix = string.Empty;
     if (size != CoverArtImageSize.Original) {
       suffix = "-" + ((int) size).ToString(CultureInfo.InvariantCulture);
     }
     var address= $"{entity}/{mbid:D}/{id}{suffix}";
-    using var response = await this.PerformRequestAsync(address).ConfigureAwait(false);
+    using var response = await this.PerformRequestAsync(address, cancellationToken).ConfigureAwait(false);
     var contentLength = response.Content.Headers.ContentLength ?? 0;
     if (contentLength > CoverArt.MaxImageSize) {
       throw new ArgumentException($"The requested image is too large ({contentLength} > {CoverArt.MaxImageSize}).");
     }
-#if NET || NETSTANDARD2_1_OR_GREATER
+#if NET
+    var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+    await using var _ = stream.ConfigureAwait(false);
+#elif NETSTANDARD2_1_OR_GREATER
     var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
     await using var _ = stream.ConfigureAwait(false);
 #else
@@ -572,7 +588,7 @@ public class CoverArt : IDisposable {
     }
     var data = new MemoryStream();
     try {
-      await stream.CopyToAsync(data).ConfigureAwait(false);
+      await stream.CopyToAsync(data, 64 * 1024, cancellationToken).ConfigureAwait(false);
     }
     catch {
 #if NET || NETSTANDARD2_1_OR_GREATER
@@ -585,9 +601,12 @@ public class CoverArt : IDisposable {
     return new CoverArtImage(id, size, response.Content?.Headers?.ContentType?.MediaType, data);
   }
 
-  private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid) {
-    using var response = await this.PerformRequestAsync($"{entity}/{mbid:D}").ConfigureAwait(false);
-#if NET || NETSTANDARD2_1_OR_GREATER
+  private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid, CancellationToken cancellationToken) {
+    using var response = await this.PerformRequestAsync($"{entity}/{mbid:D}", cancellationToken).ConfigureAwait(false);
+#if NET
+    var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+    await using var _ = stream.ConfigureAwait(false);
+#elif NETSTANDARD2_1_OR_GREATER
     var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
     await using var _ = stream.ConfigureAwait(false);
 #else
@@ -603,7 +622,8 @@ public class CoverArt : IDisposable {
     IRelease? release;
 #if !DEBUG
     if (characterSet == "utf-8") { // Directly use the stream
-      release = await JsonUtils.DeserializeAsync<Release>(stream, CoverArt.JsonReaderOptions).ConfigureAwait(false);
+      var jsonTask = JsonUtils.DeserializeAsync<Release>(stream, CoverArt.JsonReaderOptions, cancellationToken);
+      release = await jsonTask.ConfigureAwait(false);
       return release ?? throw new JsonException("Received a null release.");
     }
 #endif
