@@ -575,7 +575,11 @@ public class CoverArt : IDisposable {
       await stream.CopyToAsync(data).ConfigureAwait(false);
     }
     catch {
+#if NET || NETSTANDARD2_1_OR_GREATER
+      await data.DisposeAsync().ConfigureAwait(false);
+#else
       data.Dispose();
+#endif
       throw;
     }
     return new CoverArtImage(id, size, response.Content?.Headers?.ContentType?.MediaType, data);
