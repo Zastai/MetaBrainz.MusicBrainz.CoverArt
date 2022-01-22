@@ -90,8 +90,8 @@ public class CoverArt : IDisposable {
   public CoverArt(ProductHeaderValue product, Uri contact) {
     this.ContactInfo = contact;
     this.ProductInfo = product;
-    this.UserAgentContact = new ProductInfoHeaderValue($"({contact})");
-    this.UserAgentProduct = new ProductInfoHeaderValue(product);
+    this._contact = new ProductInfoHeaderValue($"({contact})");
+    this._product = new ProductInfoHeaderValue(product);
   }
 
   /// <summary>Initializes a new CoverArt Archive API client instance.</summary>
@@ -469,44 +469,44 @@ public class CoverArt : IDisposable {
 
   #region HTTP Client / IDisposable
 
-  private bool Disposed;
+  private bool _disposed;
 
-  private HttpClient? TheClient;
+  private HttpClient? _client;
 
-  private readonly ProductInfoHeaderValue UserAgentContact;
+  private readonly ProductInfoHeaderValue _contact;
 
-  private readonly ProductInfoHeaderValue UserAgentProduct;
+  private readonly ProductInfoHeaderValue _product;
 
   private HttpClient Client {
     get {
-      if (this.Disposed) {
+      if (this._disposed) {
         throw new ObjectDisposedException(nameof(CoverArt));
       }
-      if (this.TheClient == null) { // Set up the instance with the invariant settings
+      if (this._client == null) { // Set up the instance with the invariant settings
         var an = typeof(CoverArt).Assembly.GetName();
-        this.TheClient = new HttpClient {
+        this._client = new HttpClient {
           BaseAddress = new UriBuilder("https", this.Server, this.Port).Uri,
           DefaultRequestHeaders = {
               Accept = {
                 new MediaTypeWithQualityHeaderValue("application/json")
               },
               UserAgent = {
-                this.UserAgentProduct,
-                this.UserAgentContact,
+                this._product,
+                this._contact,
                 new ProductInfoHeaderValue(an.Name ?? "*Unknown Assembly*", an.Version?.ToString()),
                 new ProductInfoHeaderValue($"({CoverArt.UserAgentUrl})"),
               },
             }
         };
       }
-      return this.TheClient;
+      return this._client;
     }
   }
 
   /// <summary>Closes the underlying web service client in use by this CoverArt Archive client, if there is one.</summary>
   /// <remarks>The next web service request will create a new client.</remarks>
   public void Close() {
-    Interlocked.Exchange(ref this.TheClient, null)?.Dispose();
+    Interlocked.Exchange(ref this._client, null)?.Dispose();
   }
 
   /// <summary>Disposes the web service client in use by this CoverArt Archive client, if there is one.</summary>
@@ -524,7 +524,7 @@ public class CoverArt : IDisposable {
       this.Close();
     }
     finally {
-      this.Disposed = true;
+      this._disposed = true;
     }
   }
 
@@ -542,9 +542,11 @@ public class CoverArt : IDisposable {
     var client = this.Client;
     var request = new HttpRequestMessage(HttpMethod.Get, address);
     var response = await client.SendAsync(request);
-    Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' (v{response.Version})");
+    Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' " +
+                $"(v{response.Version})");
     Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {CoverArt.FormatMultiLine(response.Headers.ToString())}");
-    Debug.Print($"[{DateTime.UtcNow}] => CONTENT: {response.Content.Headers.ContentType}, {response.Content.Headers.ContentLength ?? 0} byte(s))");
+    Debug.Print($"[{DateTime.UtcNow}] => CONTENT: {response.Content.Headers.ContentType}, " +
+                $"{response.Content.Headers.ContentLength ?? 0} byte(s))");
     return response;
   }
 
@@ -630,13 +632,13 @@ public class CoverArt : IDisposable {
   }
 
   private static Uri GetDefaultContactInfo() {
-    return CoverArt.DefaultContactInfo ??
-      throw new InvalidOperationException($"When not passed to a constructor, contact info needs to be set using {nameof(CoverArt.DefaultContactInfo)}.");
+    var msg = $"When not passed to a constructor, contact info needs to be set using {nameof(CoverArt.DefaultContactInfo)}.";
+    return CoverArt.DefaultContactInfo ?? throw new InvalidOperationException(msg);
   }
 
   private static ProductHeaderValue GetDefaultProductInfo() {
-    return CoverArt.DefaultProductInfo ??
-      throw new InvalidOperationException($"When not passed to a constructor, product info needs to be set using {nameof(CoverArt.DefaultContactInfo)}.");
+    var msg = $"When not passed to a constructor, product info needs to be set using {nameof(CoverArt.GetDefaultProductInfo)}.";
+    return CoverArt.DefaultProductInfo ?? throw new InvalidOperationException(msg);
   }
 
   private static void ResultOf(Task task) => task.ConfigureAwait(false).GetAwaiter().GetResult();
