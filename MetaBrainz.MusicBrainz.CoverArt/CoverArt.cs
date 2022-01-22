@@ -277,7 +277,7 @@ public class CoverArt : IDisposable {
   /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
   /// Possible status codes for the response are:
   /// <ul><li>
-  ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "fromt" image set);
+  ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "front" image set);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
