@@ -36,7 +36,7 @@ public sealed class CoverArtImage : IDisposable {
   /// <exception cref="ArgumentException">
   /// When the image data is not valid (or not supported by the <see cref="System.Drawing.Image"/> class).
   /// </exception>
-  /// <remarks>This method only </remarks>
+  /// <exception cref="PlatformNotSupportedException">When not running on Windows.</exception>
 #if NET
   [SupportedOSPlatform("windows")]
 #endif
