@@ -241,7 +241,7 @@ public class CoverArt : IDisposable {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchBack(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => CoverArt.ResultOf(this.FetchImageAsync("release", mbid, "back", size));
+    => CoverArt.ResultOf(this.FetchBackAsync(mbid, size));
 
   /// <summary>Fetch the main "back" image for the specified release.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -281,7 +281,7 @@ public class CoverArt : IDisposable {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchFront(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => CoverArt.ResultOf(this.FetchImageAsync("release", mbid, "front", size));
+    => CoverArt.ResultOf(this.FetchFrontAsync(mbid, size));
 
   /// <summary>Fetch the main "front" image for the specified release, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -321,7 +321,7 @@ public class CoverArt : IDisposable {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchGroupFront(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => CoverArt.ResultOf(this.FetchImageAsync("release-group", mbid, "front", size));
+    => CoverArt.ResultOf(this.FetchGroupFrontAsync(mbid, size));
 
   /// <summary>Fetch the main "front" image for the specified release group, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release group ID for which the image is requested.</param>
@@ -358,7 +358,7 @@ public class CoverArt : IDisposable {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public IRelease FetchGroupRelease(Guid mbid) => CoverArt.ResultOf(this.FetchReleaseAsync("release-group", mbid));
+  public IRelease FetchGroupRelease(Guid mbid) => CoverArt.ResultOf(this.FetchGroupReleaseAsync(mbid));
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release group (if any).</summary>
   /// <param name="mbid">The MusicBrainz release group ID for which cover art information is requested.</param>
@@ -399,7 +399,7 @@ public class CoverArt : IDisposable {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchImage(Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original)
-    => CoverArt.ResultOf(this.FetchImageAsync("release", mbid, id, size));
+    => CoverArt.ResultOf(this.FetchImageAsync(mbid, id, size));
 
   /// <summary>Fetch the specified image for the specified release, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -437,7 +437,7 @@ public class CoverArt : IDisposable {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public IRelease FetchRelease(Guid mbid) => CoverArt.ResultOf(this.FetchReleaseAsync("release", mbid));
+  public IRelease FetchRelease(Guid mbid) => CoverArt.ResultOf(this.FetchReleaseAsync(mbid));
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release (if any).</summary>
   /// <param name="mbid">The MusicBrainz release ID for which cover art information is requested.</param>
