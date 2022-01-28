@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" IncludeAssets="compile" PrivateAssets="all" />
+    <PackageReference Include="MetaBrainz.Common" />
     <PackageReference Include="MetaBrainz.Common.Json" />
     <PackageReference Include="System.Drawing.Common" />
     <PackageReference Include="System.Net.Http" />

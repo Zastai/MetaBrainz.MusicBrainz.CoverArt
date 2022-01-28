@@ -5,13 +5,13 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 using JetBrains.Annotations;
 
+using MetaBrainz.Common;
 using MetaBrainz.Common.Json;
 using MetaBrainz.MusicBrainz.CoverArt.Interfaces;
 using MetaBrainz.MusicBrainz.CoverArt.Json;
@@ -241,7 +241,7 @@ public class CoverArt : IDisposable {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchBack(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => CoverArt.ResultOf(this.FetchBackAsync(mbid, size));
+    => AsyncUtils.ResultOf(this.FetchBackAsync(mbid, size));
 
   /// <summary>Fetch the main "back" image for the specified release.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -283,7 +283,7 @@ public class CoverArt : IDisposable {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchFront(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => CoverArt.ResultOf(this.FetchFrontAsync(mbid, size));
+    => AsyncUtils.ResultOf(this.FetchFrontAsync(mbid, size));
 
   /// <summary>Fetch the main "front" image for the specified release, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -325,7 +325,7 @@ public class CoverArt : IDisposable {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchGroupFront(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
-    => CoverArt.ResultOf(this.FetchGroupFrontAsync(mbid, size));
+    => AsyncUtils.ResultOf(this.FetchGroupFrontAsync(mbid, size));
 
   /// <summary>Fetch the main "front" image for the specified release group, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release group ID for which the image is requested.</param>
@@ -364,7 +364,7 @@ public class CoverArt : IDisposable {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public IRelease FetchGroupRelease(Guid mbid) => CoverArt.ResultOf(this.FetchGroupReleaseAsync(mbid));
+  public IRelease FetchGroupRelease(Guid mbid) => AsyncUtils.ResultOf(this.FetchGroupReleaseAsync(mbid));
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release group (if any).</summary>
   /// <param name="mbid">The MusicBrainz release group ID for which cover art information is requested.</param>
@@ -407,7 +407,7 @@ public class CoverArt : IDisposable {
   /// </li></ul>
   /// </exception>
   public CoverArtImage FetchImage(Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original)
-    => CoverArt.ResultOf(this.FetchImageAsync(mbid, id, size));
+    => AsyncUtils.ResultOf(this.FetchImageAsync(mbid, id, size));
 
   /// <summary>Fetch the specified image for the specified release, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -447,7 +447,7 @@ public class CoverArt : IDisposable {
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
-  public IRelease FetchRelease(Guid mbid) => CoverArt.ResultOf(this.FetchReleaseAsync(mbid));
+  public IRelease FetchRelease(Guid mbid) => AsyncUtils.ResultOf(this.FetchReleaseAsync(mbid));
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release (if any).</summary>
   /// <param name="mbid">The MusicBrainz release ID for which cover art information is requested.</param>
@@ -556,7 +556,7 @@ public class CoverArt : IDisposable {
     var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(false);
     Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' " +
                 $"(v{response.Version})");
-    Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {CoverArt.FormatMultiLine(response.Headers.ToString())}");
+    Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {TextUtils.FormatMultiLine(response.Headers.ToString())}");
     Debug.Print($"[{DateTime.UtcNow}] => CONTENT: {response.Content.Headers.ContentType}, " +
                 $"{response.Content.Headers.ContentLength ?? 0} byte(s))");
     return response;
@@ -603,71 +603,25 @@ public class CoverArt : IDisposable {
 
   private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid, CancellationToken cancellationToken) {
     using var response = await this.PerformRequestAsync($"{entity}/{mbid:D}", cancellationToken).ConfigureAwait(false);
-#if NET
-    var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-    await using var _ = stream.ConfigureAwait(false);
-#elif NETSTANDARD2_1_OR_GREATER
-    var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-    await using var _ = stream.ConfigureAwait(false);
-#else
-    using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#endif
-    if (stream == null) {
-      throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
-    }
-    var characterSet = response.Content?.Headers?.ContentType?.CharSet;
-    if (string.IsNullOrWhiteSpace(characterSet)) {
-      characterSet = "utf-8";
-    }
-    IRelease? release;
-#if !DEBUG
-    if (characterSet == "utf-8") { // Directly use the stream
-      var jsonTask = JsonUtils.DeserializeAsync<Release>(stream, CoverArt.JsonReaderOptions, cancellationToken);
-      release = await jsonTask.ConfigureAwait(false);
-      return release ?? throw new JsonException("Received a null release.");
-    }
-#endif
-    var enc = Encoding.GetEncoding(characterSet);
-    using var sr = new StreamReader(stream, enc, false, 1024, true);
-    var json = await sr.ReadToEndAsync().ConfigureAwait(false);
-    Debug.Print($"[{DateTime.UtcNow}] => JSON: {JsonUtils.Prettify(json)}");
-    release = JsonUtils.Deserialize<Release>(json, CoverArt.JsonReaderOptions);
-    return release ?? throw new JsonException("Received a null release.");
+    var jsonTask = JsonUtils.GetJsonContentAsync<Release>(response, CoverArt.JsonReaderOptions, cancellationToken);
+    return await jsonTask.ConfigureAwait(false) ?? throw new JsonException("Received a null release.");
   }
 
   #endregion
 
   #region Utility Methods
 
-  private static string FormatMultiLine(string text) {
-    const string prefix = "<<";
-    const string suffix = ">>";
-    const string sep = "\n  ";
-    char[] newlines = { '\r', '\n' };
-    text = text.Replace("\r\n", "\n").TrimEnd(newlines);
-    var lines = text.Split(newlines);
-    if (lines.Length == 0) {
-      return prefix + suffix;
-    }
-    if (lines.Length == 1) {
-      return prefix + lines[0] + suffix;
-    }
-    return prefix + sep + string.Join(sep, lines) + "\n" + suffix;
-  }
-
   private static Uri GetDefaultContactInfo() {
-    var msg = $"When not passed to a constructor, contact info needs to be set using {nameof(CoverArt.DefaultContactInfo)}.";
+    const string msg = "When not passed to a constructor, contact info needs to be set using " +
+                       $"{nameof(CoverArt.DefaultContactInfo)}.";
     return CoverArt.DefaultContactInfo ?? throw new InvalidOperationException(msg);
   }
 
   private static ProductHeaderValue GetDefaultProductInfo() {
-    var msg = $"When not passed to a constructor, product info needs to be set using {nameof(CoverArt.GetDefaultProductInfo)}.";
+    const string msg = "When not passed to a constructor, product info needs to be set using " +
+                       $"{nameof(CoverArt.DefaultProductInfo)}.";
     return CoverArt.DefaultProductInfo ?? throw new InvalidOperationException(msg);
   }
-
-  private static void ResultOf(Task task) => task.ConfigureAwait(false).GetAwaiter().GetResult();
-
-  private static T ResultOf<T>(Task<T> task) => task.ConfigureAwait(false).GetAwaiter().GetResult();
 
   #endregion
 
