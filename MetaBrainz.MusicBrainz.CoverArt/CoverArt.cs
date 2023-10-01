@@ -230,15 +230,20 @@ public class CoverArt : IDisposable {
   /// JPEG.
   /// </param>
   /// <returns>The requested image data.</returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "back" image set);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
   /// </exception>
   public CoverArtImage FetchBack(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
     => AsyncUtils.ResultOf(this.FetchBackAsync(mbid, size));
@@ -251,15 +256,20 @@ public class CoverArt : IDisposable {
   /// </param>
   /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "back" image set);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
   /// </exception>
   public Task<CoverArtImage> FetchBackAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original,
                                             CancellationToken cancellationToken = new())
@@ -272,15 +282,20 @@ public class CoverArt : IDisposable {
   /// JPEG.
   /// </param>
   /// <returns>The requested image data.</returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "front" image set);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
   /// </exception>
   public CoverArtImage FetchFront(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
     => AsyncUtils.ResultOf(this.FetchFrontAsync(mbid, size));
@@ -293,15 +308,20 @@ public class CoverArt : IDisposable {
   /// </param>
   /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "front" image set);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
   /// </exception>
   public Task<CoverArtImage> FetchFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original,
                                              CancellationToken cancellationToken = new())
@@ -314,15 +334,20 @@ public class CoverArt : IDisposable {
   /// JPEG.
   /// </param>
   /// <returns>The requested image data.</returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release group does not exist (or has no "front" image set);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
   /// </exception>
   public CoverArtImage FetchGroupFront(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original)
     => AsyncUtils.ResultOf(this.FetchGroupFrontAsync(mbid, size));
@@ -335,15 +360,20 @@ public class CoverArt : IDisposable {
   /// </param>
   /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release group does not exist (or has no "front" image set);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
   /// </exception>
   public Task<CoverArtImage> FetchGroupFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original,
                                                   CancellationToken cancellationToken = new())
@@ -352,17 +382,22 @@ public class CoverArt : IDisposable {
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release group (if any).</summary>
   /// <param name="mbid">The MusicBrainz release group ID for which cover art information is requested.</param>
   /// <returns>
-  /// A <see cref="Release"/> object containing information about the cover art for the release group's main release.
+  /// An <see cref="IRelease"/> object containing information about the cover art for the release group's main release.
   /// </returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release group does not exist (or has no associated cover art);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
   /// </exception>
   public IRelease FetchGroupRelease(Guid mbid) => AsyncUtils.ResultOf(this.FetchGroupReleaseAsync(mbid));
 
@@ -370,21 +405,66 @@ public class CoverArt : IDisposable {
   /// <param name="mbid">The MusicBrainz release group ID for which cover art information is requested.</param>
   /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>
-  /// An asynchronous operation returning a <see cref="Release"/> object containing information about the cover art for the
+  /// An asynchronous operation returning an <see cref="IRelease"/> object containing information about the cover art for the
   /// release group's main release.
   /// </returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release group does not exist (or has no associated cover art);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
+  /// </exception>
   public Task<IRelease> FetchGroupReleaseAsync(Guid mbid, CancellationToken cancellationToken = new())
     => this.FetchReleaseAsync("release-group", mbid, cancellationToken);
+
+  /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release group (if any).</summary>
+  /// <param name="mbid">The MusicBrainz release group ID for which cover art information is requested.</param>
+  /// <returns>
+  /// An <see cref="IRelease"/> object containing information about the cover art for the release group's main release, or
+  /// <see langword="null"/> if the release group does not exist (or has no associated cover art).
+  /// </returns>
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; the most common case will
+  /// be status 503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
+  /// </exception>
+  public IRelease? FetchGroupReleaseIfAvailable(Guid mbid) => AsyncUtils.ResultOf(this.FetchGroupReleaseIfAvailableAsync(mbid));
+
+  /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release group (if any).</summary>
+  /// <param name="mbid">The MusicBrainz release group ID for which cover art information is requested.</param>
+  /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
+  /// <returns>
+  /// An asynchronous operation returning an <see cref="IRelease"/> object containing information about the cover art for the
+  /// release group's main release, or <see langword="null"/> if the release group does not exist (or has no associated cover art).
+  /// </returns>
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; the most common case will
+  /// be status 503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
+  /// </exception>
+  public Task<IRelease?> FetchGroupReleaseIfAvailableAsync(Guid mbid, CancellationToken cancellationToken = new())
+    => this.FetchReleaseIfAvailableAsync("release-group", mbid, cancellationToken);
 
   /// <summary>Fetch the specified image for the specified release, in the specified size.</summary>
   /// <param name="mbid">The MusicBrainz release ID for which the image is requested.</param>
@@ -396,15 +476,20 @@ public class CoverArt : IDisposable {
   /// JPEG.
   /// </param>
   /// <returns>The requested image data.</returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release and/or the specified image do not exist;
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
   /// </exception>
   public CoverArtImage FetchImage(Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original)
     => AsyncUtils.ResultOf(this.FetchImageAsync(mbid, id, size));
@@ -420,15 +505,20 @@ public class CoverArt : IDisposable {
   /// </param>
   /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release and/or the specified image do not exist;
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
   /// </exception>
   public Task<CoverArtImage> FetchImageAsync(Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original,
                                              CancellationToken cancellationToken = new())
@@ -436,16 +526,21 @@ public class CoverArt : IDisposable {
 
   /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release (if any).</summary>
   /// <param name="mbid">The MusicBrainz release ID for which cover art information is requested.</param>
-  /// <returns>A <see cref="Release"/> object containing information about the cover art for the release.</returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <returns>An <see cref="IRelease"/> object containing information about the cover art for the release.</returns>
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no associated cover art);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
   /// </exception>
   public IRelease FetchRelease(Guid mbid) => AsyncUtils.ResultOf(this.FetchReleaseAsync(mbid));
 
@@ -453,21 +548,66 @@ public class CoverArt : IDisposable {
   /// <param name="mbid">The MusicBrainz release ID for which cover art information is requested.</param>
   /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>
-  /// An asynchronous operation returning a <see cref="Release"/> object containing information about the cover art for the
+  /// An asynchronous operation returning an <see cref="IRelease"/> object containing information about the cover art for the
   /// release.
   /// </returns>
-  /// <exception cref="WebException">
-  /// When something went wrong with the request.
-  /// More details can be found in the exception's <see cref="WebException.Response"/> property.<br/>
-  /// Possible status codes for the response are:
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no associated cover art);
   /// </li><li>
   ///   503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </li></ul>
   /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
+  /// </exception>
   public Task<IRelease> FetchReleaseAsync(Guid mbid, CancellationToken cancellationToken = new())
     => this.FetchReleaseAsync("release", mbid, cancellationToken);
+
+  /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release (if any).</summary>
+  /// <param name="mbid">The MusicBrainz release ID for which cover art information is requested.</param>
+  /// <returns>
+  /// An <see cref="IRelease"/> object containing information about the cover art for the release, or <see langword="null"/> if
+  /// the release does not exist (or has no associated cover art).
+  /// </returns>
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; the most common case will
+  /// be status 503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
+  /// </exception>
+  public IRelease? FetchReleaseIfAvailable(Guid mbid) => AsyncUtils.ResultOf(this.FetchReleaseIfAvailableAsync(mbid));
+
+  /// <summary>Fetch information about the cover art associated with the specified MusicBrainz release (if any).</summary>
+  /// <param name="mbid">The MusicBrainz release ID for which cover art information is requested.</param>
+  /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
+  /// <returns>
+  /// An asynchronous operation returning an <see cref="IRelease"/> object containing information about the cover art for the
+  /// release, or <see langword="null"/> if the release does not exist (or has no associated cover art).
+  /// </returns>
+  /// <exception cref="HttpError">
+  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; the most common case will
+  /// be status 503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
+  /// </exception>
+  /// <exception cref="HttpRequestException">
+  /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
+  /// timeout.
+  /// </exception>
+  /// <exception cref="TaskCanceledException">
+  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
+  /// </exception>
+  public Task<IRelease?> FetchReleaseIfAvailableAsync(Guid mbid, CancellationToken cancellationToken = new())
+    => this.FetchReleaseIfAvailableAsync("release", mbid, cancellationToken);
 
   #endregion
 
@@ -549,19 +689,6 @@ public class CoverArt : IDisposable {
 
   #region Basic Request Execution
 
-  private async Task<HttpResponseMessage> PerformRequestAsync(string address, CancellationToken cancellationToken) {
-    Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {this.BaseUri}{address}");
-    var client = this.Client;
-    var request = new HttpRequestMessage(HttpMethod.Get, address);
-    var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(false);
-    Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' " +
-                $"(v{response.Version})");
-    Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {TextUtils.FormatMultiLine(response.Headers.ToString())}");
-    Debug.Print($"[{DateTime.UtcNow}] => CONTENT: {response.Content.Headers.ContentType}, " +
-                $"{response.Content.Headers.ContentLength ?? 0} byte(s))");
-    return response;
-  }
-
   private async Task<CoverArtImage> FetchImageAsync(string entity, Guid mbid, string id, CoverArtImageSize size,
                                                     CancellationToken cancellationToken) {
     var suffix = string.Empty;
@@ -570,6 +697,7 @@ public class CoverArt : IDisposable {
     }
     var address= $"{entity}/{mbid:D}/{id}{suffix}";
     using var response = await this.PerformRequestAsync(address, cancellationToken).ConfigureAwait(false);
+    CoverArt.ThrowIfUnsuccessful(response);
     var contentLength = response.Content.Headers.ContentLength ?? 0;
     if (contentLength > CoverArt.MaxImageSize) {
       throw new ArgumentException($"The requested image is too large ({contentLength} > {CoverArt.MaxImageSize}).");
@@ -603,8 +731,67 @@ public class CoverArt : IDisposable {
 
   private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid, CancellationToken cancellationToken) {
     using var response = await this.PerformRequestAsync($"{entity}/{mbid:D}", cancellationToken).ConfigureAwait(false);
+    CoverArt.ThrowIfUnsuccessful(response);
+    return await CoverArt.ParseReleaseAsync(response, cancellationToken);
+  }
+
+  private async Task<IRelease?> FetchReleaseIfAvailableAsync(string entity, Guid mbid, CancellationToken cancellationToken) {
+    using var response = await this.PerformRequestAsync($"{entity}/{mbid:D}", cancellationToken).ConfigureAwait(false);
+    if (response.StatusCode == HttpStatusCode.NotFound) {
+      return null;
+    }
+    CoverArt.ThrowIfUnsuccessful(response);
+    return await CoverArt.ParseReleaseAsync(response, cancellationToken);
+  }
+
+  private static async Task<IRelease> ParseReleaseAsync(HttpResponseMessage response, CancellationToken cancellationToken) {
     var jsonTask = JsonUtils.GetJsonContentAsync<Release>(response, CoverArt.JsonReaderOptions, cancellationToken);
     return await jsonTask.ConfigureAwait(false) ?? throw new JsonException("Received a null release.");
+  }
+
+  private async Task<HttpResponseMessage> PerformRequestAsync(string address, CancellationToken cancellationToken) {
+    Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {this.BaseUri}{address}");
+    var client = this.Client;
+    var request = new HttpRequestMessage(HttpMethod.Get, address);
+    var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(false);
+    Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' " +
+                $"(v{response.Version})");
+    Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {TextUtils.FormatMultiLine(response.Headers.ToString())}");
+    Debug.Print($"[{DateTime.UtcNow}] => CONTENT: {response.Content.Headers.ContentType}, " +
+                $"{response.Content.Headers.ContentLength ?? 0} byte(s))");
+    return response;
+  }
+
+  private static void ThrowIfUnsuccessful(HttpResponseMessage response) {
+    // FIXME: Or should this use IsSuccessStatusCode?
+    if (response.StatusCode == HttpStatusCode.OK) {
+      return;
+    }
+#if DEBUG
+    string? errorInfo = null;
+    if (response.Content.Headers.ContentLength > 0) {
+      errorInfo = AsyncUtils.ResultOf(HttpUtils.GetStringContentAsync(response));
+      if (string.IsNullOrWhiteSpace(errorInfo)) {
+        Debug.Print($"[{DateTime.UtcNow}] => NO ERROR RESPONSE TEXT");
+        errorInfo = null;
+      }
+      else {
+        Debug.Print($"[{DateTime.UtcNow}] => ERROR RESPONSE TEXT: {TextUtils.FormatMultiLine(errorInfo)}");
+      }
+    }
+    else {
+      Debug.Print($"[{DateTime.UtcNow}] => NO ERROR RESPONSE CONTENT");
+    }
+    if (errorInfo is not null && response.Content.Headers.ContentType?.MediaType == "text/html") {
+      // The contents seems to be of the form:
+      //   <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+      //   <title>404 Not Found</title>
+      //   <h1>Not Found</h1>
+      //   <p>No cover art found for release 968db8b7-c519-43e5-bb45-9f244c92b670</p>
+      // FIXME: It may make sense to try and extract the contents of that paragraph for use in the exception.
+    }
+#endif
+    throw new HttpError(response);
   }
 
   #endregion
