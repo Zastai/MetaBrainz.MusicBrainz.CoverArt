@@ -10,7 +10,7 @@
     <PackageCopyrightYears>2016-2023</PackageCopyrightYears>
     <PackageRepositoryName>MetaBrainz.MusicBrainz.CoverArt</PackageRepositoryName>
     <PackageTags>MusicBrainz album cover art archive CAA libcoverart</PackageTags>
-    <Version>5.1.0</Version>
+    <Version>5.1.1-pre</Version>
   </PropertyGroup>
 
   <ItemGroup>
