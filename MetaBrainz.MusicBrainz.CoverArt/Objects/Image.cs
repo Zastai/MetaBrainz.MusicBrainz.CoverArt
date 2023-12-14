@@ -15,24 +15,24 @@ internal sealed class Image : JsonBasedObject, IImage {
     this.Types = types;
   }
 
-  public bool Approved { get; set; }
+  public bool Approved { get; init; }
 
-  public bool Back { get; set; }
+  public bool Back { get; init; }
 
-  public string? Comment { get; set; }
+  public string? Comment { get; init; }
 
   public int Edit { get; }
 
-  public bool Front { get; set; }
+  public bool Front { get; init; }
 
   public string Id { get; }
 
-  public Uri? Location { get; set; }
+  public Uri? Location { get; init; }
 
   public IThumbnails Thumbnails { get; }
 
   public CoverArtType Types { get; }
 
-  public IReadOnlyList<string>? UnknownTypes { get; set; }
+  public IReadOnlyList<string>? UnknownTypes { get; init; }
 
 }

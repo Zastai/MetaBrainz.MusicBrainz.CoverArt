@@ -12,7 +12,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Json.Readers;
 
 internal sealed class ImageReader : ObjectReader<Image> {
 
-  public static readonly ImageReader Instance = new ImageReader();
+  public static readonly ImageReader Instance = new();
 
   protected override Image ReadObjectContents(ref Utf8JsonReader reader, JsonSerializerOptions options) {
     var approved = false;
