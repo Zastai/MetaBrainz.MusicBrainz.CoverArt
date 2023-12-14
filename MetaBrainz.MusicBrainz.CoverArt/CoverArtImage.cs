@@ -37,9 +37,7 @@ public sealed class CoverArtImage : IDisposable {
   /// When the image data is not valid (or not supported by the <see cref="System.Drawing.Image"/> class).
   /// </exception>
   /// <exception cref="PlatformNotSupportedException">When not running on Windows.</exception>
-#if NET
   [SupportedOSPlatform("windows")]
-#endif
   public Image Decode(bool useEmbeddedColorManagement = false, bool validateImageData = false)
     => Image.FromStream(this.Data, useEmbeddedColorManagement, validateImageData);
 

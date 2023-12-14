@@ -702,15 +702,8 @@ public class CoverArt : IDisposable {
     if (contentLength > CoverArt.MaxImageSize) {
       throw new ArgumentException($"The requested image is too large ({contentLength} > {CoverArt.MaxImageSize}).");
     }
-#if NET
     var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
     await using var _ = stream.ConfigureAwait(false);
-#elif NETSTANDARD2_1_OR_GREATER
-    var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-    await using var _ = stream.ConfigureAwait(false);
-#else
-    using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#endif
     if (stream == null) {
       throw new WebException("No data received.", WebExceptionStatus.ReceiveFailure);
     }
@@ -719,14 +712,10 @@ public class CoverArt : IDisposable {
       await stream.CopyToAsync(data, 64 * 1024, cancellationToken).ConfigureAwait(false);
     }
     catch {
-#if NET || NETSTANDARD2_1_OR_GREATER
       await data.DisposeAsync().ConfigureAwait(false);
-#else
-      data.Dispose();
-#endif
       throw;
     }
-    return new CoverArtImage(id, size, response.Content?.Headers?.ContentType?.MediaType, data);
+    return new CoverArtImage(id, size, response.Content.Headers.ContentType?.MediaType, data);
   }
 
   private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid, CancellationToken cancellationToken) {

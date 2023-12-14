@@ -8,10 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support Files", "Support Fi
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		appveyor.yml = appveyor.yml
 		build-package.ps1 = build-package.ps1
 		Directory.Packages.props = Directory.Packages.props
-		global.json = global.json
 		LICENSE.md = LICENSE.md
 		package-icon.png = package-icon.png
 		README.md = README.md
@@ -26,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{5E6BB8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{47A089B9-B7FA-435A-8771-9AD4BE1D1D5C}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\release-drafter.yml = .github\workflows\release-drafter.yml
 		.github\workflows\update-labels.yml = .github\workflows\update-labels.yml
 	EndProjectSection

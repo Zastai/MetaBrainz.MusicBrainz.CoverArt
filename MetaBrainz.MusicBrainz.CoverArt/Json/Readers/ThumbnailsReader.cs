@@ -10,7 +10,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Json.Readers;
 
 internal sealed class ThumbnailsReader : ObjectReader<Thumbnails> {
 
-  public static readonly ThumbnailsReader Instance = new ThumbnailsReader();
+  public static readonly ThumbnailsReader Instance = new();
 
   protected override Thumbnails ReadObjectContents(ref Utf8JsonReader reader, JsonSerializerOptions options) {
     Uri? small = null;
