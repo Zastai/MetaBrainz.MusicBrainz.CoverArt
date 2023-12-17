@@ -202,29 +202,6 @@ public enum CoverArtType : long {
 }
 ```
 
-### Type: HttpError
-
-```cs
-[System.SerializableAttribute]
-public class HttpError : System.Exception {
-
-  string? Reason {
-    public get;
-  }
-
-  System.Net.HttpStatusCode Status {
-    public get;
-  }
-
-  public HttpError(System.Net.Http.HttpResponseMessage response);
-
-  public HttpError(System.Net.HttpStatusCode status, string? reason);
-
-  public override string ToString();
-
-}
-```
-
 ## Namespace: MetaBrainz.MusicBrainz.CoverArt.Interfaces
 
 ### Type: IImage

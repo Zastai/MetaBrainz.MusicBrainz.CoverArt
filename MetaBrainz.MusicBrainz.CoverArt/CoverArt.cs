@@ -51,10 +51,8 @@ public class CoverArt : IDisposable {
   /// The maximum allowed image size; an exception is thrown if a response larger than this is received from the CoverArt Archive.
   /// </summary>
   /// <remarks>
-  /// The CoverArt does not actually impose a file size limit.
-  /// At the moment, the largest item in the CAA is a PDF of 236MiB, followed by a PNG of 159MiB
-  /// (<a href="http://notlob.eu/caa/largeimages">source</a>).
-  /// Setting the limit at 512MiB therefore seems fairly sensible.
+  /// The CoverArt does not actually impose a file size limit; however, a limit of 512MiB seems fairly sensible (and can easily be
+  /// raised if larger cover art is ever encountered).
   /// </remarks>
   public const int MaxImageSize = 512 * 1024 * 1024;
 
@@ -231,7 +229,7 @@ public class CoverArt : IDisposable {
   /// </param>
   /// <returns>The requested image data.</returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "back" image set);
   /// </li><li>
@@ -257,7 +255,7 @@ public class CoverArt : IDisposable {
   /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "back" image set);
   /// </li><li>
@@ -283,7 +281,7 @@ public class CoverArt : IDisposable {
   /// </param>
   /// <returns>The requested image data.</returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "front" image set);
   /// </li><li>
@@ -309,7 +307,7 @@ public class CoverArt : IDisposable {
   /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no "front" image set);
   /// </li><li>
@@ -335,7 +333,7 @@ public class CoverArt : IDisposable {
   /// </param>
   /// <returns>The requested image data.</returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release group does not exist (or has no "front" image set);
   /// </li><li>
@@ -361,7 +359,7 @@ public class CoverArt : IDisposable {
   /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release group does not exist (or has no "front" image set);
   /// </li><li>
@@ -385,7 +383,7 @@ public class CoverArt : IDisposable {
   /// An <see cref="IRelease"/> object containing information about the cover art for the release group's main release.
   /// </returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release group does not exist (or has no associated cover art);
   /// </li><li>
@@ -409,7 +407,7 @@ public class CoverArt : IDisposable {
   /// release group's main release.
   /// </returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release group does not exist (or has no associated cover art);
   /// </li><li>
@@ -433,8 +431,8 @@ public class CoverArt : IDisposable {
   /// <see langword="null"/> if the release group does not exist (or has no associated cover art).
   /// </returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; the most common case will
-  /// be status 503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
+  /// When the request succeeded but reported an HTTP error status; the most common case will be status 503
+  /// (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </exception>
   /// <exception cref="HttpRequestException">
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
@@ -453,8 +451,8 @@ public class CoverArt : IDisposable {
   /// release group's main release, or <see langword="null"/> if the release group does not exist (or has no associated cover art).
   /// </returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; the most common case will
-  /// be status 503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
+  /// When the request succeeded but reported an HTTP error status; the most common case will be status 503
+  /// (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </exception>
   /// <exception cref="HttpRequestException">
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
@@ -477,7 +475,7 @@ public class CoverArt : IDisposable {
   /// </param>
   /// <returns>The requested image data.</returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release and/or the specified image do not exist;
   /// </li><li>
@@ -506,7 +504,7 @@ public class CoverArt : IDisposable {
   /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
   /// <returns>An asynchronous operation returning the requested image data.</returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release and/or the specified image do not exist;
   /// </li><li>
@@ -528,7 +526,7 @@ public class CoverArt : IDisposable {
   /// <param name="mbid">The MusicBrainz release ID for which cover art information is requested.</param>
   /// <returns>An <see cref="IRelease"/> object containing information about the cover art for the release.</returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no associated cover art);
   /// </li><li>
@@ -552,7 +550,7 @@ public class CoverArt : IDisposable {
   /// release.
   /// </returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; most common cases will be:
+  /// When the request succeeded but reported an HTTP error status; the most common cases will be:
   /// <ul><li>
   ///   404 (<see cref="HttpStatusCode.NotFound"/>) when the release does not exist (or has no associated cover art);
   /// </li><li>
@@ -576,8 +574,8 @@ public class CoverArt : IDisposable {
   /// the release does not exist (or has no associated cover art).
   /// </returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; the most common case will
-  /// be status 503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
+  /// When the request succeeded but reported an HTTP error status; the most common case will be status 503
+  /// (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </exception>
   /// <exception cref="HttpRequestException">
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
@@ -596,8 +594,8 @@ public class CoverArt : IDisposable {
   /// release, or <see langword="null"/> if the release does not exist (or has no associated cover art).
   /// </returns>
   /// <exception cref="HttpError">
-  /// When the request succeeded but reported an HTTP status other than <see cref="HttpStatusCode.OK"/>; the most common case will
-  /// be status 503 (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
+  /// When the request succeeded but reported an HTTP error status; the most common case will be status 503
+  /// (<see cref="HttpStatusCode.ServiceUnavailable"/>) when the server is unavailable, or rate limiting is in effect.
   /// </exception>
   /// <exception cref="HttpRequestException">
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
@@ -608,14 +606,6 @@ public class CoverArt : IDisposable {
   /// </exception>
   public Task<IRelease?> FetchReleaseIfAvailableAsync(Guid mbid, CancellationToken cancellationToken = new())
     => this.FetchReleaseIfAvailableAsync("release", mbid, cancellationToken);
-
-  #endregion
-
-  #region Internals
-
-  #region JSON Options
-
-  private static readonly JsonSerializerOptions JsonReaderOptions = JsonUtils.CreateReaderOptions(Converters.Readers);
 
   #endregion
 
@@ -631,9 +621,13 @@ public class CoverArt : IDisposable {
 
   private HttpClient Client {
     get {
+#if NET6_0
       if (this._disposed) {
         throw new ObjectDisposedException(nameof(CoverArt));
       }
+#else
+      ObjectDisposedException.ThrowIf(this._disposed, typeof(CoverArt));
+#endif
       if (this._client == null) { // Set up the instance with the invariant settings
         var an = typeof(CoverArt).Assembly.GetName();
         this._client = new HttpClient {
@@ -657,9 +651,7 @@ public class CoverArt : IDisposable {
 
   /// <summary>Closes the underlying web service client in use by this CoverArt Archive client, if there is one.</summary>
   /// <remarks>The next web service request will create a new client.</remarks>
-  public void Close() {
-    Interlocked.Exchange(ref this._client, null)?.Dispose();
-  }
+  public void Close() => Interlocked.Exchange(ref this._client, null)?.Dispose();
 
   /// <summary>Disposes the web service client in use by this CoverArt Archive client, if there is one.</summary>
   /// <remarks>Further attempts at web service requests will cause <see cref="ObjectDisposedException"/> to be thrown.</remarks>
@@ -687,6 +679,10 @@ public class CoverArt : IDisposable {
 
   #endregion
 
+  #region Internals
+
+  private static readonly JsonSerializerOptions JsonReaderOptions = JsonUtils.CreateReaderOptions(Converters.Readers);
+
   #region Basic Request Execution
 
   private async Task<CoverArtImage> FetchImageAsync(string entity, Guid mbid, string id, CoverArtImageSize size,
@@ -697,7 +693,6 @@ public class CoverArt : IDisposable {
     }
     var address= $"{entity}/{mbid:D}/{id}{suffix}";
     using var response = await this.PerformRequestAsync(address, cancellationToken).ConfigureAwait(false);
-    CoverArt.ThrowIfUnsuccessful(response);
     var contentLength = response.Content.Headers.ContentLength ?? 0;
     if (contentLength > CoverArt.MaxImageSize) {
       throw new ArgumentException($"The requested image is too large ({contentLength} > {CoverArt.MaxImageSize}).");
@@ -720,7 +715,6 @@ public class CoverArt : IDisposable {
 
   private async Task<IRelease> FetchReleaseAsync(string entity, Guid mbid, CancellationToken cancellationToken) {
     using var response = await this.PerformRequestAsync($"{entity}/{mbid:D}", cancellationToken).ConfigureAwait(false);
-    CoverArt.ThrowIfUnsuccessful(response);
     return await CoverArt.ParseReleaseAsync(response, cancellationToken);
   }
 
@@ -729,7 +723,6 @@ public class CoverArt : IDisposable {
     if (response.StatusCode == HttpStatusCode.NotFound) {
       return null;
     }
-    CoverArt.ThrowIfUnsuccessful(response);
     return await CoverArt.ParseReleaseAsync(response, cancellationToken);
   }
 
@@ -748,39 +741,20 @@ public class CoverArt : IDisposable {
     Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {TextUtils.FormatMultiLine(response.Headers.ToString())}");
     Debug.Print($"[{DateTime.UtcNow}] => CONTENT: {response.Content.Headers.ContentType}, " +
                 $"{response.Content.Headers.ContentLength ?? 0} byte(s))");
-    return response;
-  }
-
-  private static void ThrowIfUnsuccessful(HttpResponseMessage response) {
-    // FIXME: Or should this use IsSuccessStatusCode?
-    if (response.StatusCode == HttpStatusCode.OK) {
-      return;
+    try {
+      return await response.EnsureSuccessfulAsync(cancellationToken).ConfigureAwait(false);
     }
-#if DEBUG
-    string? errorInfo = null;
-    if (response.Content.Headers.ContentLength > 0) {
-      errorInfo = AsyncUtils.ResultOf(HttpUtils.GetStringContentAsync(response));
-      if (string.IsNullOrWhiteSpace(errorInfo)) {
-        Debug.Print($"[{DateTime.UtcNow}] => NO ERROR RESPONSE TEXT");
-        errorInfo = null;
+    catch (HttpError error) {
+      if (!string.IsNullOrEmpty(error.Content) && error.ContentHeaders?.ContentType?.MediaType == "text/html") {
+        // The contents seems to be of the form:
+        //   <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+        //   <title>404 Not Found</title>
+        //   <h1>Not Found</h1>
+        //   <p>No cover art found for release 968db8b7-c519-43e5-bb45-9f244c92b670</p>
+        // FIXME: It may make sense to try and extract the contents of that paragraph for use in the exception.
       }
-      else {
-        Debug.Print($"[{DateTime.UtcNow}] => ERROR RESPONSE TEXT: {TextUtils.FormatMultiLine(errorInfo)}");
-      }
+      throw;
     }
-    else {
-      Debug.Print($"[{DateTime.UtcNow}] => NO ERROR RESPONSE CONTENT");
-    }
-    if (errorInfo is not null && response.Content.Headers.ContentType?.MediaType == "text/html") {
-      // The contents seems to be of the form:
-      //   <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-      //   <title>404 Not Found</title>
-      //   <h1>Not Found</h1>
-      //   <p>No cover art found for release 968db8b7-c519-43e5-bb45-9f244c92b670</p>
-      // FIXME: It may make sense to try and extract the contents of that paragraph for use in the exception.
-    }
-#endif
-    throw new HttpError(response);
   }
 
   #endregion
