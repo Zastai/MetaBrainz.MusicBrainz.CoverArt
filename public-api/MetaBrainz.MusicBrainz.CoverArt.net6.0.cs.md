@@ -16,6 +16,8 @@ public class CoverArt : System.IDisposable {
 
   public const int MaxImageSize = 536870912;
 
+  public static readonly System.Diagnostics.TraceSource TraceSource;
+
   public const string UserAgentUrl = "https://github.com/Zastai/MetaBrainz.MusicBrainz.CoverArt";
 
   System.Uri BaseUri {

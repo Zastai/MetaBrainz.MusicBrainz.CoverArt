@@ -56,6 +56,9 @@ public class CoverArt : IDisposable {
   /// </remarks>
   public const int MaxImageSize = 512 * 1024 * 1024;
 
+  /// <summary>The trace source (named 'MetaBrainz.MusicBrainz.CoverArt') used by this class.</summary>
+  public static readonly TraceSource TraceSource = new("MetaBrainz.MusicBrainz.CoverArt", SourceLevels.Off);
+
   /// <summary>The URL included in the user agent for requests as part of this library's information.</summary>
   public const string UserAgentUrl = "https://github.com/Zastai/MetaBrainz.MusicBrainz.CoverArt";
 
@@ -732,22 +735,25 @@ public class CoverArt : IDisposable {
   }
 
   private async Task<HttpResponseMessage> PerformRequestAsync(string address, CancellationToken cancellationToken) {
-    Debug.Print($"[{DateTime.UtcNow}] CAA REQUEST: GET {this.BaseUri}{address}");
-    var client = this.Client;
+    var ts = CoverArt.TraceSource;
+    ts.TraceEvent(TraceEventType.Verbose, 1, "CAA REQUEST: GET {0}{1}", this.BaseUri, address);
     var request = new HttpRequestMessage(HttpMethod.Get, address);
-    var response = await client.SendAsync(request, cancellationToken).ConfigureAwait(false);
-    Debug.Print($"[{DateTime.UtcNow}] => RESPONSE: {(int) response.StatusCode}/{response.StatusCode} '{response.ReasonPhrase}' " +
-                $"(v{response.Version})");
-    Debug.Print($"[{DateTime.UtcNow}] => HEADERS: {TextUtils.FormatMultiLine(response.Headers.ToString())}");
-    Debug.Print($"[{DateTime.UtcNow}] => CONTENT: {response.Content.Headers.ContentType}, " +
-                $"{response.Content.Headers.ContentLength ?? 0} byte(s))");
+    var response = await this.Client.SendAsync(request, cancellationToken).ConfigureAwait(false);
+    if (ts.Switch.ShouldTrace(TraceEventType.Verbose)) {
+      ts.TraceEvent(TraceEventType.Verbose, 2, "RESPONSE: {0}/{1} '{2}' (v{3})", (int) response.StatusCode, response.StatusCode,
+                    response.ReasonPhrase, response.Version);
+      ts.TraceEvent(TraceEventType.Verbose, 3, "HEADERS: {0}", TextUtils.FormatMultiLine(response.Headers.ToString()));
+      ts.TraceEvent(TraceEventType.Verbose, 4, "CONTENT: {0}, {1} byte(s))", response.Content.Headers.ContentType,
+                             response.Content.Headers.ContentLength ?? 0);
+    }
     try {
       return await response.EnsureSuccessfulAsync(cancellationToken).ConfigureAwait(false);
     }
     catch (HttpError error) {
       if (!string.IsNullOrEmpty(error.Content) && error.ContentHeaders?.ContentType?.MediaType == "text/html") {
-        // The contents seems to be of the form:
-        //   <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+        // The contents seem to be of the form:
+        //   <!doctype html>
+        //   <html lang=en>
         //   <title>404 Not Found</title>
         //   <h1>Not Found</h1>
         //   <p>No cover art found for release 968db8b7-c519-43e5-bb45-9f244c92b670</p>
