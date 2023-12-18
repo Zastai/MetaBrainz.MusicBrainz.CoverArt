@@ -1,11 +1,13 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,7 +23,7 @@ namespace MetaBrainz.MusicBrainz.CoverArt;
 
 /// <summary>Class providing access to the CoverArt Archive API.</summary>
 [PublicAPI]
-public class CoverArt : IDisposable {
+public partial class CoverArt : IDisposable {
 
   #region Static Fields / Properties
 
@@ -734,6 +736,31 @@ public class CoverArt : IDisposable {
     return await jsonTask.ConfigureAwait(false) ?? throw new JsonException("Received a null release.");
   }
 
+  // Error Response Contents:
+  //   <!doctype html>
+  //   <html lang=en>
+  //   <title>404 Not Found</title>
+  //   <h1>Not Found</h1>
+  //   <p>No cover art found for release 968db8b7-c519-43e5-bb45-9f244c92b670</p>
+#if NET7_0_OR_GREATER
+  [StringSyntax(StringSyntaxAttribute.Regex)]
+#endif
+  private const string ErrorResponseContentPatternText =
+    @"^(?:.*\n)*\s*<title>(\d+)?\s*(.*?)\s*</title>\s*<h1>\s*(.*?)\s*</h1>\s*<p>\s*(.*?)\s*</p>\s*$";
+
+#if NET6_0
+
+  private static readonly Regex TheErrorResponseContentPattern = new(CoverArt.ErrorResponseContentPatternText);
+
+  private static Regex ErrorResponseContentPattern() => CoverArt.TheErrorResponseContentPattern;
+
+#else
+
+  [GeneratedRegex(CoverArt.ErrorResponseContentPatternText)]
+  private static partial Regex ErrorResponseContentPattern();
+
+#endif
+
   private async Task<HttpResponseMessage> PerformRequestAsync(string address, CancellationToken cancellationToken) {
     var ts = CoverArt.TraceSource;
     ts.TraceEvent(TraceEventType.Verbose, 1, "CAA REQUEST: GET {0}{1}", this.BaseUri, address);
@@ -751,13 +778,27 @@ public class CoverArt : IDisposable {
     }
     catch (HttpError error) {
       if (!string.IsNullOrEmpty(error.Content) && error.ContentHeaders?.ContentType?.MediaType == "text/html") {
-        // The contents seem to be of the form:
-        //   <!doctype html>
-        //   <html lang=en>
-        //   <title>404 Not Found</title>
-        //   <h1>Not Found</h1>
-        //   <p>No cover art found for release 968db8b7-c519-43e5-bb45-9f244c92b670</p>
-        // FIXME: It may make sense to try and extract the contents of that paragraph for use in the exception.
+        var match = CoverArt.ErrorResponseContentPattern().Match(error.Content);
+        if (match.Success) {
+          var code = match.Groups[1].Success ? match.Groups[1].Value : null;
+          var title = match.Groups[2].Value;
+          var heading = match.Groups[3].Value;
+          var message = match.Groups[4].Value;
+          if (int.TryParse(code, NumberStyles.None, CultureInfo.InvariantCulture, out var status)) {
+            if (status != (int) error.Status) {
+              ts.TraceEvent(TraceEventType.Verbose, 5, "STATUS CODE MISMATCH: {0} <> {1}", status, (int) error.Status);
+            }
+          }
+          else {
+            ts.TraceEvent(TraceEventType.Verbose, 6, "STATUS CODE MISSING FROM TITLE");
+            status = (int) error.Status;
+          }
+          if (title != heading) {
+            ts.TraceEvent(TraceEventType.Verbose, 7, "TITLE/HEADING MISMATCH: '{0}' <> '{1}'", title, heading);
+            message = $"{heading}: {message}";
+          }
+          throw new HttpError((HttpStatusCode) status, title, error.Version, message, error);
+        }
       }
       throw;
     }
