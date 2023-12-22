@@ -186,8 +186,10 @@ public enum CoverArtType : long {
 
   Back = 2L,
   Booklet = 4L,
+  Bottom = 32768L,
   Front = 1L,
   Liner = 256L,
+  MatrixRunout = 8192L,
   Medium = 8L,
   None = 0L,
   Obi = 32L,
@@ -196,6 +198,7 @@ public enum CoverArtType : long {
   RawUnedited = 4096L,
   Spine = 64L,
   Sticker = 512L,
+  Top = 16384L,
   Track = 128L,
   Tray = 16L,
   Unknown = 4611686018427387904L,

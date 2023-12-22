@@ -108,11 +108,17 @@ internal sealed class ImageReader : ObjectReader<Image> {
       case "Booklet":
         types |= CoverArtType.Booklet;
         break;
+      case "Bottom":
+        types |= CoverArtType.Bottom;
+        break;
       case "Front":
         types |= CoverArtType.Front;
         break;
       case "Liner":
         types |= CoverArtType.Liner;
+        break;
+      case "Matrix/Runout":
+        types |= CoverArtType.MatrixRunout;
         break;
       case "Medium":
         types |= CoverArtType.Medium;
@@ -125,6 +131,9 @@ internal sealed class ImageReader : ObjectReader<Image> {
         break;
       case "Poster":
         types |= CoverArtType.Poster;
+        break;
+      case "Top":
+        types |= CoverArtType.Top;
         break;
       case "Track":
         types |= CoverArtType.Track;
