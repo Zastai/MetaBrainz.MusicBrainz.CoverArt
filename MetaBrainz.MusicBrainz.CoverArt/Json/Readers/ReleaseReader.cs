@@ -39,10 +39,10 @@ internal sealed class ReleaseReader : ObjectReader<Release> {
       }
       reader.Read();
     }
-    if (images == null) {
+    if (images is null) {
       throw new JsonException("Required property 'images' missing or null.");
     }
-    if (location == null) {
+    if (location is null) {
       throw new JsonException("Required property 'release' missing or null.");
     }
     return new Release(images, location) {

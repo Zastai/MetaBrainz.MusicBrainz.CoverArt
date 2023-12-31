@@ -80,13 +80,13 @@ internal sealed class ImageReader : ObjectReader<Image> {
       }
       reader.Read();
     }
-    if (!edit.HasValue) {
+    if (edit is null) {
       throw new JsonException("Required property 'edit' missing or null.");
     }
-    if (id == null) {
+    if (id is null) {
       throw new JsonException("Required property 'id' missing or null.");
     }
-    if (thumbnails == null) {
+    if (thumbnails is null) {
       throw new JsonException("Required property 'thumbnails' missing or null.");
     }
     return new Image(edit.Value, id, thumbnails, types) {
