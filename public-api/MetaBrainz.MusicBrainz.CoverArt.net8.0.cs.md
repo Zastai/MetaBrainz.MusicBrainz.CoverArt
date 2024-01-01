@@ -12,7 +12,7 @@
 ### Type: CoverArt
 
 ```cs
-public class CoverArt : System.IDisposable {
+public sealed class CoverArt : System.IDisposable {
 
   public const int MaxImageSize = 536870912;
 
