@@ -12,7 +12,7 @@
 ### Type: CoverArt
 
 ```cs
-public class CoverArt : System.IDisposable {
+public sealed class CoverArt : System.IDisposable {
 
   public const int MaxImageSize = 536870912;
 
@@ -24,21 +24,7 @@ public class CoverArt : System.IDisposable {
     public get;
   }
 
-  System.Uri ContactInfo {
-    public get;
-  }
-
-  System.Uri? DefaultContactInfo {
-    public static get;
-    public static set;
-  }
-
   int DefaultPort {
-    public static get;
-    public static set;
-  }
-
-  System.Net.Http.Headers.ProductHeaderValue? DefaultProductInfo {
     public static get;
     public static set;
   }
@@ -53,18 +39,13 @@ public class CoverArt : System.IDisposable {
     public static set;
   }
 
-  string DefaultUserAgent {
+  System.Collections.Generic.IList<System.Net.Http.Headers.ProductInfoHeaderValue> DefaultUserAgent {
     public static get;
-    public static set;
   }
 
   int Port {
     public get;
     public set;
-  }
-
-  System.Net.Http.Headers.ProductHeaderValue ProductInfo {
-    public get;
   }
 
   string Server {
@@ -77,31 +58,33 @@ public class CoverArt : System.IDisposable {
     public set;
   }
 
+  System.Collections.Generic.IList<System.Net.Http.Headers.ProductInfoHeaderValue> UserAgent {
+    public get;
+  }
+
   public CoverArt();
 
-  public CoverArt(System.Net.Http.Headers.ProductHeaderValue product);
+  public CoverArt(params System.Net.Http.Headers.ProductInfoHeaderValue[] userAgent);
 
-  public CoverArt(System.Net.Http.Headers.ProductHeaderValue product, System.Uri contact);
+  public CoverArt(System.Net.Http.HttpClient client, bool takeOwnership = false);
 
-  public CoverArt(System.Net.Http.Headers.ProductHeaderValue product, string contact);
+  public CoverArt(string application, System.Version? version);
 
-  public CoverArt(System.Uri contact);
+  public CoverArt(string application, System.Version? version, System.Uri contact);
 
-  public CoverArt(string contact);
+  public CoverArt(string application, System.Version? version, string contact);
 
-  public CoverArt(string application, System.Version version);
+  public CoverArt(string application, string? version);
 
-  public CoverArt(string application, System.Version version, System.Uri contact);
+  public CoverArt(string application, string? version, System.Uri contact);
 
-  public CoverArt(string application, System.Version version, string contact);
-
-  public CoverArt(string application, string version);
-
-  public CoverArt(string application, string version, System.Uri contact);
-
-  public CoverArt(string application, string version, string contact);
+  public CoverArt(string application, string? version, string contact);
 
   public void Close();
+
+  public void ConfigureClient(System.Action<System.Net.Http.HttpClient>? code);
+
+  public void ConfigureClientCreation(System.Func<System.Net.Http.HttpClient>? code);
 
   public sealed override void Dispose();
 
