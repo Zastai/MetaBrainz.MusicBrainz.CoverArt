@@ -261,13 +261,7 @@ public sealed partial class CoverArt : IDisposable {
 
   private HttpClient Client {
     get {
-#if NET6_0
-      if (this._disposed) {
-        throw new ObjectDisposedException(nameof(CoverArt));
-      }
-#else
       ObjectDisposedException.ThrowIf(this._disposed, typeof(CoverArt));
-#endif
       if (this._client is null) {
         var client = this._clientCreation?.Invoke() ?? new HttpClient();
         this._userAgent.ForEach(client.DefaultRequestHeaders.UserAgent.Add);
@@ -291,9 +285,7 @@ public sealed partial class CoverArt : IDisposable {
   /// <summary>Sets up code to run to configure a newly-created HTTP client.</summary>
   /// <param name="code">The configuration code for an HTTP client, or <see langword="null"/> to clear such code.</param>
   /// <remarks>The configuration code will be called <em>after</em> <see cref="UserAgent"/> is applied.</remarks>
-  public void ConfigureClient(Action<HttpClient>? code) {
-    this._clientConfiguration = code;
-  }
+  public void ConfigureClient(Action<HttpClient>? code) => this._clientConfiguration = code;
 
   /// <summary>Sets up code to run to create an HTTP client.</summary>
   /// <param name="code">The creation code for an HTTP client, or <see langword="null"/> to clear such code.</param>
@@ -301,9 +293,7 @@ public sealed partial class CoverArt : IDisposable {
   /// <see cref="UserAgent"/> and any code set via <see cref="ConfigureClient(System.Action{System.Net.Http.HttpClient}?)"/> will be
   /// applied to the client returned by <paramref name="code"/>.
   /// </remarks>
-  public void ConfigureClientCreation(Func<HttpClient>? code) {
-    this._clientCreation = code;
-  }
+  public void ConfigureClientCreation(Func<HttpClient>? code) => this._clientCreation = code;
 
   /// <summary>Discards any and all resources held by this CoverArt Archive client.</summary>
   /// <remarks>Further attempts at web service requests will cause <see cref="ObjectDisposedException"/> to be thrown.</remarks>
