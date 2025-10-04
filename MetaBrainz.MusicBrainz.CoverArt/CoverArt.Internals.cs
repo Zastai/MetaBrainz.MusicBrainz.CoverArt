@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -26,6 +27,15 @@ public sealed partial class CoverArt {
   #endregion
 
   #region Basic Request Execution
+
+  // Error Response Contents:
+  //   <!doctype html>
+  //   <html lang=en>
+  //   <title>404 Not Found</title>
+  //   <h1>Not Found</h1>
+  //   <p>No cover art found for release 968db8b7-c519-43e5-bb45-9f244c92b670</p>
+  [GeneratedRegex(@"^(?:.*\n)*\s*<title>(\d+)?\s*(.*?)\s*</title>\s*<h1>\s*(.*?)\s*</h1>\s*<p>\s*(.*?)\s*</p>\s*$")]
+  private static partial Regex ErrorResponseContentPattern();
 
   private async Task<CoverArtImage> FetchImageAsync(string entity, Guid mbid, string id, CoverArtImageSize size,
                                                     CancellationToken cancellationToken) {
@@ -63,11 +73,24 @@ public sealed partial class CoverArt {
 
   private async Task<IRelease?> FetchReleaseIfAvailableAsync(string entity, Guid mbid, CancellationToken cancellationToken) {
     var endPoint = $"{entity}/{mbid:D}";
-    using var response = await this.PerformRequestAsync(HttpMethod.Get, endPoint, cancellationToken).ConfigureAwait(false);
+    using var response = await this.PerformRequestAsync(HttpMethod.Get, endPoint, false, cancellationToken).ConfigureAwait(false);
     if (response.StatusCode == HttpStatusCode.NotFound) {
       return null;
     }
+    await CoverArt.HandleError(response, cancellationToken).ConfigureAwait(false);
     return await CoverArt.ParseReleaseAsync(response, cancellationToken);
+  }
+
+  private static async Task HandleError(HttpResponseMessage response, CancellationToken cancellationToken) {
+    try {
+      await response.EnsureSuccessfulAsync(cancellationToken).ConfigureAwait(false);
+    }
+    catch (HttpError error) {
+      if (CoverArt.TryExtractErrorInfo(error, out var status, out var title, out var message)) {
+        throw new HttpError((HttpStatusCode) status, title, error.Version, message, error);
+      }
+      throw;
+    }
   }
 
   private static async Task<IRelease> ParseReleaseAsync(HttpResponseMessage response, CancellationToken cancellationToken) {
@@ -75,16 +98,10 @@ public sealed partial class CoverArt {
     return await jsonTask.ConfigureAwait(false) ?? throw new JsonException("Received a null release.");
   }
 
-  // Error Response Contents:
-  //   <!doctype html>
-  //   <html lang=en>
-  //   <title>404 Not Found</title>
-  //   <h1>Not Found</h1>
-  //   <p>No cover art found for release 968db8b7-c519-43e5-bb45-9f244c92b670</p>
-  [GeneratedRegex(@"^(?:.*\n)*\s*<title>(\d+)?\s*(.*?)\s*</title>\s*<h1>\s*(.*?)\s*</h1>\s*<p>\s*(.*?)\s*</p>\s*$")]
-  private static partial Regex ErrorResponseContentPattern();
+  private Task<HttpResponseMessage> PerformRequestAsync(HttpMethod method, string endPoint, CancellationToken cancellationToken)
+    => this.PerformRequestAsync(method, endPoint, true, cancellationToken);
 
-  private async Task<HttpResponseMessage> PerformRequestAsync(HttpMethod method, string endPoint,
+  private async Task<HttpResponseMessage> PerformRequestAsync(HttpMethod method, string endPoint, bool handleError,
                                                               CancellationToken cancellationToken) {
     using var request = new HttpRequestMessage(method, new UriBuilder(this.UrlScheme, this.Server, this.Port, endPoint).Uri);
     var ts = CoverArt.TraceSource;
@@ -115,35 +132,44 @@ public sealed partial class CoverArt {
       var headers = response.Content.Headers;
       ts.TraceEvent(TraceEventType.Verbose, 5, "CONTENT ({0}): {1} byte(s)", headers.ContentType, headers.ContentLength ?? 0);
     }
-    try {
-      return await response.EnsureSuccessfulAsync(cancellationToken).ConfigureAwait(false);
+    if (handleError) {
+      await CoverArt.HandleError(response, cancellationToken);
     }
-    catch (HttpError error) {
-      if (!string.IsNullOrEmpty(error.Content) && error.ContentHeaders?.ContentType?.MediaType == "text/html") {
-        var match = CoverArt.ErrorResponseContentPattern().Match(error.Content);
-        if (match.Success) {
-          var code = match.Groups[1].Success ? match.Groups[1].Value : null;
-          var title = match.Groups[2].Value;
-          var heading = match.Groups[3].Value;
-          var message = match.Groups[4].Value;
-          if (int.TryParse(code, NumberStyles.None, CultureInfo.InvariantCulture, out var status)) {
-            if (status != (int) error.Status) {
-              ts.TraceEvent(TraceEventType.Verbose, 5, "STATUS CODE MISMATCH: {0} <> {1}", status, (int) error.Status);
-            }
-          }
-          else {
-            ts.TraceEvent(TraceEventType.Verbose, 6, "STATUS CODE MISSING FROM TITLE");
-            status = (int) error.Status;
-          }
-          if (title != heading) {
-            ts.TraceEvent(TraceEventType.Verbose, 7, "TITLE/HEADING MISMATCH: '{0}' <> '{1}'", title, heading);
-            message = $"{heading}: {message}";
-          }
-          throw new HttpError((HttpStatusCode) status, title, error.Version, message, error);
-        }
+    return response;
+  }
+
+  private static bool TryExtractErrorInfo(HttpError error, out int status, [NotNullWhen(true)] out string? title,
+                                          [NotNullWhen(true)] out string? message) {
+    status = 0;
+    title = null;
+    message = null;
+    if (string.IsNullOrEmpty(error.Content) || error.ContentHeaders?.ContentType?.MediaType != "text/html") {
+      return false;
+    }
+    var match = CoverArt.ErrorResponseContentPattern().Match(error.Content);
+    if (!match.Success) {
+      return false;
+    }
+    var ts = CoverArt.TraceSource;
+    var code = match.Groups[1].Success ? match.Groups[1].Value : null;
+    title = match.Groups[2].Value;
+    var heading = match.Groups[3].Value;
+    message = match.Groups[4].Value;
+    if (int.TryParse(code, NumberStyles.None, CultureInfo.InvariantCulture, out status)) {
+      if (status != (int) error.Status) {
+        ts.TraceEvent(TraceEventType.Verbose, 6, "STATUS CODE MISMATCH: {0} <> {1}", status, (int) error.Status);
       }
-      throw;
     }
+    else {
+      ts.TraceEvent(TraceEventType.Verbose, 7, "STATUS CODE MISSING FROM TITLE");
+      status = (int) error.Status;
+    }
+    if (title != heading) {
+      ts.TraceEvent(TraceEventType.Verbose, 8, "TITLE/HEADING MISMATCH: '{0}' <> '{1}'", title, heading);
+      message = $"{heading}: {message}";
+    }
+    ts.TraceEvent(TraceEventType.Verbose, 9, "[ERROR INFO] STATUS: {0} TITLE: '{1}' MESSAGE: '{2}'", status, title, message);
+    return true;
   }
 
   #endregion
