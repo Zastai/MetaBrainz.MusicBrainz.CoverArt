@@ -45,9 +45,9 @@ CoverArt.TraceSource.Listeners.Add(listener);
 
 #### In Configuration
 
-Starting from .NET 7 your application can also be set up to read tracing
-configuration from the application configuration file. To do so, the
-application needs to add the following to its startup code:
+Your application can also be set up to read tracing configuration from
+the application configuration file. To do so, the following needs to be
+added to its startup code:
 
 ```cs
 System.Diagnostics.TraceConfiguration.Register();

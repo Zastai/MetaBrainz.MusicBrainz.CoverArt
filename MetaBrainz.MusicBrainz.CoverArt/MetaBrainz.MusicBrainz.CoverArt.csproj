@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
 
-  <Sdk Name="MetaBrainz.Build.Sdk" Version="3.1.2" />
+  <Sdk Name="MetaBrainz.Build.Sdk" Version="4.0.0" />
 
   <PropertyGroup>
     <Authors>Zastai</Authors>
@@ -11,7 +11,7 @@
       based on their MusicBrainz ID.
     </Description>
     <PackageCopyrightOwners>Tim Van Holder</PackageCopyrightOwners>
-    <PackageCopyrightYears>2016-2023</PackageCopyrightYears>
+    <PackageCopyrightYears>2016-2025</PackageCopyrightYears>
     <PackageRepositoryName>MetaBrainz.MusicBrainz.CoverArt</PackageRepositoryName>
     <PackageTags>MusicBrainz album cover art archive CAA libcoverart</PackageTags>
     <Version>6.0.1-pre</Version>
