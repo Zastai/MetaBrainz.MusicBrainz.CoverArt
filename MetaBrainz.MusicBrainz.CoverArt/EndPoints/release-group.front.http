@@ -1,0 +1,11 @@
+﻿### Mom's Apple Pie (original)
+GET https://coverartarchive.org/release-group/7ab53ff8-c18a-40ba-b288-76eecaab0c9e/front
+
+### Mom's Apple Pie (Thumbnail - 250px)
+GET https://coverartarchive.org/release-group/7ab53ff8-c18a-40ba-b288-76eecaab0c9e/front-250
+
+### Mom's Apple Pie (Thumbnail - 500px)
+GET https://coverartarchive.org/release-group/7ab53ff8-c18a-40ba-b288-76eecaab0c9e/front-500
+
+### Mom's Apple Pie (Thumbnail - 1200px)
+GET https://coverartarchive.org/release-group/7ab53ff8-c18a-40ba-b288-76eecaab0c9e/front-1200
