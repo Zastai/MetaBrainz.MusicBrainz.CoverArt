@@ -1,0 +1,11 @@
+﻿### De Maxxx 37 (original)
+GET https://coverartarchive.org/release/562d532f-90b4-407c-b91e-69a42e717263/front
+
+### De Maxxx 37 (Thumbnail - 250px)
+GET https://coverartarchive.org/release/562d532f-90b4-407c-b91e-69a42e717263/front-250
+
+### De Maxxx 37 (Thumbnail - 500px)
+GET https://coverartarchive.org/release/562d532f-90b4-407c-b91e-69a42e717263/front-500
+
+### De Maxxx 37 (Thumbnail - 1200px)
+GET https://coverartarchive.org/release/562d532f-90b4-407c-b91e-69a42e717263/front-1200
