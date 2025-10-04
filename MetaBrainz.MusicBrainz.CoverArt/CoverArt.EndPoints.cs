@@ -32,9 +32,7 @@ public sealed partial class CoverArt {
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
   /// timeout.
   /// </exception>
-  /// <exception cref="TaskCanceledException">
-  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
-  /// </exception>
+  /// <exception cref="TaskCanceledException">When the request failed due to timeout.</exception>
   public Task<CoverArtImage> FetchBackAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original,
                                             CancellationToken cancellationToken = new())
     => this.FetchImageAsync("release", mbid, "back", size, cancellationToken);
@@ -59,9 +57,7 @@ public sealed partial class CoverArt {
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
   /// timeout.
   /// </exception>
-  /// <exception cref="TaskCanceledException">
-  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
-  /// </exception>
+  /// <exception cref="TaskCanceledException">When the request failed due to timeout.</exception>
   public Task<CoverArtImage> FetchFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original,
                                              CancellationToken cancellationToken = new())
     => this.FetchImageAsync("release", mbid, "front", size, cancellationToken);
@@ -86,9 +82,7 @@ public sealed partial class CoverArt {
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
   /// timeout.
   /// </exception>
-  /// <exception cref="TaskCanceledException">
-  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
-  /// </exception>
+  /// <exception cref="TaskCanceledException">When the request failed due to timeout.</exception>
   public Task<CoverArtImage> FetchGroupFrontAsync(Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original,
                                                   CancellationToken cancellationToken = new())
     => this.FetchImageAsync("release-group", mbid, "front", size, cancellationToken);
@@ -112,9 +106,7 @@ public sealed partial class CoverArt {
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
   /// timeout.
   /// </exception>
-  /// <exception cref="TaskCanceledException">
-  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
-  /// </exception>
+  /// <exception cref="TaskCanceledException">When the request failed due to timeout.</exception>
   public Task<IRelease> FetchGroupReleaseAsync(Guid mbid, CancellationToken cancellationToken = new())
     => this.FetchReleaseAsync("release-group", mbid, cancellationToken);
 
@@ -133,9 +125,7 @@ public sealed partial class CoverArt {
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
   /// timeout.
   /// </exception>
-  /// <exception cref="TaskCanceledException">
-  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
-  /// </exception>
+  /// <exception cref="TaskCanceledException">When the request failed due to timeout.</exception>
   public Task<IRelease?> FetchGroupReleaseIfAvailableAsync(Guid mbid, CancellationToken cancellationToken = new())
     => this.FetchReleaseIfAvailableAsync("release-group", mbid, cancellationToken);
 
@@ -162,9 +152,7 @@ public sealed partial class CoverArt {
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
   /// timeout.
   /// </exception>
-  /// <exception cref="TaskCanceledException">
-  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
-  /// </exception>
+  /// <exception cref="TaskCanceledException">When the request failed due to timeout.</exception>
   public Task<CoverArtImage> FetchImageAsync(Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original,
                                              CancellationToken cancellationToken = new())
     => this.FetchImageAsync("release", mbid, id, size, cancellationToken);
@@ -188,9 +176,7 @@ public sealed partial class CoverArt {
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
   /// timeout.
   /// </exception>
-  /// <exception cref="TaskCanceledException">
-  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
-  /// </exception>
+  /// <exception cref="TaskCanceledException">When the request failed due to timeout.</exception>
   public Task<IRelease> FetchReleaseAsync(Guid mbid, CancellationToken cancellationToken = new())
     => this.FetchReleaseAsync("release", mbid, cancellationToken);
 
@@ -209,9 +195,7 @@ public sealed partial class CoverArt {
   /// When the request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation or
   /// timeout.
   /// </exception>
-  /// <exception cref="TaskCanceledException">
-  /// When the request failed due to timeout (.NET Core and .NET 5 and later only).
-  /// </exception>
+  /// <exception cref="TaskCanceledException">When the request failed due to timeout.</exception>
   public Task<IRelease?> FetchReleaseIfAvailableAsync(Guid mbid, CancellationToken cancellationToken = new())
     => this.FetchReleaseIfAvailableAsync("release", mbid, cancellationToken);
 
