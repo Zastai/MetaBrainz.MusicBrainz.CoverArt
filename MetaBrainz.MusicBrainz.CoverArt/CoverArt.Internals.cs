@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -82,23 +81,8 @@ public sealed partial class CoverArt {
   //   <title>404 Not Found</title>
   //   <h1>Not Found</h1>
   //   <p>No cover art found for release 968db8b7-c519-43e5-bb45-9f244c92b670</p>
-#if NET7_0_OR_GREATER
-  [StringSyntax(StringSyntaxAttribute.Regex)]
-#endif
-  private const string ErrorResponseContentPatternText =
-    @"^(?:.*\n)*\s*<title>(\d+)?\s*(.*?)\s*</title>\s*<h1>\s*(.*?)\s*</h1>\s*<p>\s*(.*?)\s*</p>\s*$";
-
-#if NET6_0
-  private static readonly Regex TheErrorResponseContentPattern = new(CoverArt.ErrorResponseContentPatternText);
-
-  private static Regex ErrorResponseContentPattern() => CoverArt.TheErrorResponseContentPattern;
-
-#else
-
-  [GeneratedRegex(CoverArt.ErrorResponseContentPatternText)]
+  [GeneratedRegex(@"^(?:.*\n)*\s*<title>(\d+)?\s*(.*?)\s*</title>\s*<h1>\s*(.*?)\s*</h1>\s*<p>\s*(.*?)\s*</p>\s*$")]
   private static partial Regex ErrorResponseContentPattern();
-
-#endif
 
   private async Task<HttpResponseMessage> PerformRequestAsync(HttpMethod method, string endPoint,
                                                               CancellationToken cancellationToken) {
