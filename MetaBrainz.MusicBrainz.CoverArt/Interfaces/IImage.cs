@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 using JetBrains.Annotations;
 
@@ -11,10 +12,10 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Interfaces;
 [PublicAPI]
 public interface IImage : IJsonBasedObject {
 
-  /// <summary>Flag indicating whether or not the image is approved.</summary>
+  /// <summary>Flag indicating whether the image is approved.</summary>
   bool Approved { get; }
 
-  /// <summary>Flag indicating whether or not this is the image marked as the main "back" image for a release.</summary>
+  /// <summary>Flag indicating whether this is the image marked as the main "back" image for a release.</summary>
   bool Back { get; }
 
   /// <summary>The comment attached to the image, if any.</summary>
@@ -24,10 +25,13 @@ public interface IImage : IJsonBasedObject {
   /// <remarks>For more information about that edit, go to http://musicbrainz.org/edit/{edit-id}.</remarks>
   int Edit { get; }
 
-  /// <summary>Flag indicating whether or not this is the image marked as the main "front" image for a release.</summary>
+  /// <summary>Flag indicating whether this is the image marked as the main "front" image for a release.</summary>
   bool Front { get; }
 
-  /// <summary>The internal ID of the image. Can be used in a call to <see cref="CoverArt.FetchImage(Guid,string,CoverArtImageSize)"/>.</summary>
+  /// <summary>
+  /// The internal ID of the image.
+  /// This can be used in a call to <see cref="CoverArt.FetchImageAsync(Guid,string,CoverArtImageSize,CancellationToken)"/>.
+  /// </summary>
   /// <remarks>This ID is determined and set when the image is uploaded, and will never change.</remarks>
   string Id { get; }
 

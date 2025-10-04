@@ -88,35 +88,19 @@ public sealed class CoverArt : System.IDisposable {
 
   public sealed override void Dispose();
 
-  public CoverArtImage FetchBack(System.Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original);
-
   public System.Threading.Tasks.Task<CoverArtImage> FetchBackAsync(System.Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original, System.Threading.CancellationToken cancellationToken = default);
-
-  public CoverArtImage FetchFront(System.Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original);
 
   public System.Threading.Tasks.Task<CoverArtImage> FetchFrontAsync(System.Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original, System.Threading.CancellationToken cancellationToken = default);
 
-  public CoverArtImage FetchGroupFront(System.Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original);
-
   public System.Threading.Tasks.Task<CoverArtImage> FetchGroupFrontAsync(System.Guid mbid, CoverArtImageSize size = CoverArtImageSize.Original, System.Threading.CancellationToken cancellationToken = default);
-
-  public MetaBrainz.MusicBrainz.CoverArt.Interfaces.IRelease FetchGroupRelease(System.Guid mbid);
 
   public System.Threading.Tasks.Task<MetaBrainz.MusicBrainz.CoverArt.Interfaces.IRelease> FetchGroupReleaseAsync(System.Guid mbid, System.Threading.CancellationToken cancellationToken = default);
 
-  public MetaBrainz.MusicBrainz.CoverArt.Interfaces.IRelease? FetchGroupReleaseIfAvailable(System.Guid mbid);
-
   public System.Threading.Tasks.Task<MetaBrainz.MusicBrainz.CoverArt.Interfaces.IRelease?> FetchGroupReleaseIfAvailableAsync(System.Guid mbid, System.Threading.CancellationToken cancellationToken = default);
-
-  public CoverArtImage FetchImage(System.Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original);
 
   public System.Threading.Tasks.Task<CoverArtImage> FetchImageAsync(System.Guid mbid, string id, CoverArtImageSize size = CoverArtImageSize.Original, System.Threading.CancellationToken cancellationToken = default);
 
-  public MetaBrainz.MusicBrainz.CoverArt.Interfaces.IRelease FetchRelease(System.Guid mbid);
-
   public System.Threading.Tasks.Task<MetaBrainz.MusicBrainz.CoverArt.Interfaces.IRelease> FetchReleaseAsync(System.Guid mbid, System.Threading.CancellationToken cancellationToken = default);
-
-  public MetaBrainz.MusicBrainz.CoverArt.Interfaces.IRelease? FetchReleaseIfAvailable(System.Guid mbid);
 
   public System.Threading.Tasks.Task<MetaBrainz.MusicBrainz.CoverArt.Interfaces.IRelease?> FetchReleaseIfAvailableAsync(System.Guid mbid, System.Threading.CancellationToken cancellationToken = default);
 
