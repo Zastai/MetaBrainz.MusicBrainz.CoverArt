@@ -57,7 +57,9 @@ internal sealed class ImageReader : ObjectReader<Image> {
               id = numeric.ToString(CultureInfo.InvariantCulture);
             }
             else {
-              throw new JsonException($"A CoverArt Archive ID is expected to be expressed either as a number or a string, but a '{reader.TokenType}' token was found instead.");
+              var msg = $"A CoverArt Archive ID is expected to be expressed either as a number or a string, but a '" +
+                        $"{reader.TokenType}' token was found instead.";
+              throw new JsonException(msg);
             }
             break;
           case "thumbnails":
@@ -70,7 +72,7 @@ internal sealed class ImageReader : ObjectReader<Image> {
             break;
           }
           default:
-            rest ??= new Dictionary<string, object?>();
+            rest ??= [];
             rest[prop] = reader.GetOptionalObject(options);
             break;
         }
@@ -80,23 +82,18 @@ internal sealed class ImageReader : ObjectReader<Image> {
       }
       reader.Read();
     }
-    if (edit is null) {
-      throw new JsonException("Required property 'edit' missing or null.");
-    }
-    if (id is null) {
-      throw new JsonException("Required property 'id' missing or null.");
-    }
-    if (thumbnails is null) {
-      throw new JsonException("Required property 'thumbnails' missing or null.");
-    }
-    return new Image(edit.Value, id, thumbnails, types) {
+    return new Image {
       Approved = approved,
       Back = back,
       Comment = comment,
+      Edit = edit ?? throw new JsonException("Required property 'edit' missing or null."),
       Front = front,
+      Id = id ?? throw new JsonException("Required property 'id' missing or null."),
       Location = image,
+      Thumbnails = thumbnails ?? throw new JsonException("Required property 'thumbnails' missing or null."),
+      Types = types,
       UnknownTypes = unknownTypes,
-      UnhandledProperties = rest
+      UnhandledProperties = rest,
     };
   }
 
@@ -155,7 +152,7 @@ internal sealed class ImageReader : ObjectReader<Image> {
         break;
       default:
         types |= CoverArtType.Unknown;
-        unknownTypes ??= new List<string>();
+        unknownTypes ??= [];
         unknownTypes.Add(type);
         break;
     }

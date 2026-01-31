@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -75,6 +76,7 @@ public sealed partial class CoverArt {
     var endPoint = $"{entity}/{mbid:D}";
     using var response = await this.PerformRequestAsync(HttpMethod.Get, endPoint, false, cancellationToken).ConfigureAwait(false);
     if (response.StatusCode == HttpStatusCode.NotFound) {
+      await CoverArt.MaybeTraceContents(response, cancellationToken);
       return null;
     }
     await CoverArt.HandleError(response, cancellationToken).ConfigureAwait(false);
@@ -90,6 +92,22 @@ public sealed partial class CoverArt {
         throw new HttpError((HttpStatusCode) status, title, error.Version, message, error);
       }
       throw;
+    }
+  }
+
+  private static async Task MaybeTraceContents(HttpResponseMessage response, CancellationToken cancellationToken) {
+    if (!CoverArt.TraceSource.Switch.ShouldTrace(TraceEventType.Verbose)) {
+      return;
+    }
+    var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+    await using var _ = stream.ConfigureAwait(false);
+    if (stream.Length > 0) {
+      var characterSet = response.Content.Headers.GetContentEncoding();
+      using var sr = new StreamReader(stream, Encoding.GetEncoding(characterSet), false, 1024, true);
+      var content = await sr.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+      if (content is not "") {
+        CoverArt.TraceSource.TraceEvent(TraceEventType.Verbose, 404, "RESPONSE CONTENTS: {0}", TextUtils.FormatMultiLine(content));
+      }
     }
   }
 

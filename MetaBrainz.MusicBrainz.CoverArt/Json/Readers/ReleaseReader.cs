@@ -29,7 +29,7 @@ internal sealed class ReleaseReader : ObjectReader<Release> {
             location = reader.GetUri();
             break;
           default:
-            rest ??= new Dictionary<string, object?>();
+            rest ??= [];
             rest[prop] = reader.GetOptionalObject(options);
             break;
         }
@@ -39,14 +39,10 @@ internal sealed class ReleaseReader : ObjectReader<Release> {
       }
       reader.Read();
     }
-    if (images is null) {
-      throw new JsonException("Required property 'images' missing or null.");
-    }
-    if (location is null) {
-      throw new JsonException("Required property 'release' missing or null.");
-    }
-    return new Release(images, location) {
-      UnhandledProperties = rest
+    return new Release {
+      Images = images ?? throw new JsonException("Required property 'images' missing or null."),
+      Location = location ?? throw new JsonException("Required property 'release' missing or null."),
+      UnhandledProperties = rest,
     };
   }
 

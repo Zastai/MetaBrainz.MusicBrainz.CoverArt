@@ -33,45 +33,39 @@ public sealed partial class CoverArt : IDisposable {
 
   #region Static Fields / Properties
 
-  private static int _defaultPort = -1;
-
   /// <summary>The default port number to use for requests (-1 to not specify any explicit port).</summary>
   public static int DefaultPort {
-    get => CoverArt._defaultPort;
+    get;
     set {
       if (value is < -1 or > 65535) {
         throw new ArgumentOutOfRangeException(nameof(CoverArt.DefaultPort), value,
                                               "The default port number must not be less than -1 or greater than 65535.");
       }
-      CoverArt._defaultPort = value;
+      field = value;
     }
-  }
-
-  private static string _defaultServer = "coverartarchive.org";
+  } = -1;
 
   /// <summary>The default server to use for requests.</summary>
   public static string DefaultServer {
-    get => CoverArt._defaultServer;
+    get;
     set {
       if (string.IsNullOrWhiteSpace(value)) {
         throw new ArgumentException("The default server name must not be blank.", nameof(CoverArt.DefaultServer));
       }
-      CoverArt._defaultServer = value.Trim();
+      field = value.Trim();
     }
-  }
-
-  private static string _defaultUrlScheme = "https";
+  } = "coverartarchive.org";
 
   /// <summary>The default URL scheme (internet access protocol) to use for requests.</summary>
   public static string DefaultUrlScheme {
-    get => CoverArt._defaultUrlScheme;
+    get;
     set {
       if (string.IsNullOrWhiteSpace(value)) {
         throw new ArgumentException("The default URL scheme must not be blank.", nameof(CoverArt.DefaultUrlScheme));
       }
-      CoverArt._defaultUrlScheme = value.Trim();
+      field = value.Trim();
     }
-  }
+  } = "https";
 
   /// <summary>The default user agent values to use for requests.</summary>
   public static IList<ProductInfoHeaderValue> DefaultUserAgent { get; } = new List<ProductInfoHeaderValue>();
@@ -190,45 +184,39 @@ public sealed partial class CoverArt : IDisposable {
   /// <summary>The base URI for all requests.</summary>
   public Uri BaseUri => new UriBuilder(this.UrlScheme, this.Server, this.Port).Uri;
 
-  private int _port = CoverArt.DefaultPort;
-
   /// <summary>The port number to use for requests (-1 to not specify any explicit port).</summary>
   public int Port {
-    get => this._port;
+    get;
     set {
       if (value is < -1 or > 65535) {
         throw new ArgumentOutOfRangeException(nameof(CoverArt.Port), value,
                                               "The port number must not be less than -1 or greater than 65535.");
       }
-      this._port = value;
+      field = value;
     }
-  }
-
-  private string _server = CoverArt.DefaultServer;
+  } = CoverArt.DefaultPort;
 
   /// <summary>The server to use for requests.</summary>
   public string Server {
-    get => this._server;
+    get;
     set {
       if (string.IsNullOrWhiteSpace(value)) {
         throw new ArgumentException("The server name must not be blank.", nameof(CoverArt.Server));
       }
-      this._server = value.Trim();
+      field = value.Trim();
     }
-  }
-
-  private string _urlScheme = CoverArt.DefaultUrlScheme;
+  } = CoverArt.DefaultServer;
 
   /// <summary>The URL scheme (internet access protocol) to use for requests.</summary>
   public string UrlScheme {
-    get => this._urlScheme;
+    get;
     set {
       if (string.IsNullOrWhiteSpace(value)) {
         throw new ArgumentException("The URL scheme must not be blank.", nameof(CoverArt.UrlScheme));
       }
-      this._urlScheme = value.Trim();
+      field = value.Trim();
     }
-  }
+  } = CoverArt.DefaultUrlScheme;
 
   /// <summary>The user agent values to use for requests.</summary>
   /// <remarks>

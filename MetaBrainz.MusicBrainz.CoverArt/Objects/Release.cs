@@ -9,13 +9,8 @@ namespace MetaBrainz.MusicBrainz.CoverArt.Objects;
 /// <summary>Class representing a release on the CoverArt Archive.</summary>
 internal sealed class Release : JsonBasedObject, IRelease {
 
-  public Release(IReadOnlyList<IImage> images, Uri location) {
-    this.Images = images;
-    this.Location = location;
-  }
+  public required IReadOnlyList<IImage> Images { get; init; }
 
-  public IReadOnlyList<IImage> Images { get; }
-
-  public Uri Location { get; }
+  public required Uri Location { get; init; }
 
 }
