@@ -11,7 +11,7 @@
       based on their MusicBrainz ID.
     </Description>
     <PackageCopyrightOwners>Tim Van Holder</PackageCopyrightOwners>
-    <PackageCopyrightYears>2016-2025</PackageCopyrightYears>
+    <PackageCopyrightYears>2016-2026</PackageCopyrightYears>
     <PackageRepositoryName>MetaBrainz.MusicBrainz.CoverArt</PackageRepositoryName>
     <PackageTags>MusicBrainz album cover art archive CAA libcoverart</PackageTags>
     <Version>7.1.0-pre</Version>
