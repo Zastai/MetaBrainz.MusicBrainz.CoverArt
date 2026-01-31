@@ -40,7 +40,7 @@ internal sealed class ThumbnailsReader : ObjectReader<Thumbnails> {
             s1200 = reader.GetUri();
             break;
           default:
-            rest ??= new Dictionary<string, object?>();
+            rest ??= [];
             rest[prop] = reader.GetOptionalObject(options);
             break;
         }
@@ -56,7 +56,7 @@ internal sealed class ThumbnailsReader : ObjectReader<Thumbnails> {
       Size500 = s500,
       Size1200 = s1200,
       Small = small,
-      UnhandledProperties = rest
+      UnhandledProperties = rest,
     };
   }
 
